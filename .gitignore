@@ -1,0 +1,82 @@
+# ======================
+# .NET / ASP.NET Core MVC
+# ======================
+/bin/
+/obj/
+/publish/
+*.user
+*.suo
+*.userosscache
+*.vspscc
+*.vssscc
+.vs/
+*.swp
+*.swo
+/packages/
+*.nupkg
+*.snupkg
+.idea/
+*.sln.iml
+*.dll
+*.exe
+*.pdb
+*.so
+*.dylib
+/TestResults/
+*.coverage
+*.trx
+
+# ======================
+# App Settings (اگه می‌خوای تنظیمات شخصی نره)
+# ======================
+appsettings.Development.json
+appsettings.Production.json
+*.local.json
+
+# ======================
+# Frontend (CSS/JS - فقط فایل‌های سورس)
+# ======================
+# اگه از npm یا yarn استفاده می‌کنی (برای ابزارهای frontend)
+/node_modules/
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
+package-lock.json   # (اختیاری - بعضی‌ها نگه می‌دارن)
+
+# اگه از BundlerMinifier استفاده می‌کنی
+/bundleconfig.json  # خود فایل رو نگه دار، ولی خروجی‌های minified رو ignore کن
+*.min.css
+*.min.js
+
+# ======================
+# wwwroot/lib (اگر با LibMan کتابخونه میاری)
+# ======================
+# خود فایل libman.json رو نگه دار، ولی کتابخونه‌ها رو نه
+/wwwroot/lib/
+!wwwroot/lib/.keep   # (اگه می‌خوای پوشه خالی توی گیت بمونه)
+
+# ======================
+# Environment Variables
+# ======================
+.env
+.env.local
+.env.*.local
+*.local
+
+# ======================
+# IDE / Editor
+# ======================
+.vscode/
+.idea/
+*.sublime-*
+.DS_Store
+Thumbs.db
+
+# ======================
+# Database
+# ======================
+*.mdf
+*.ldf
+*.db
+*.sqlite
+*.sqlite-journal
