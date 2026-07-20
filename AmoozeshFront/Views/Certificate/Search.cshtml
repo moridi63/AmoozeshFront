@@ -1,0 +1,628 @@
+﻿@model AmoozeshFront.Models.Certificate.CertificateSearchViewModel
+
+@{
+    ViewData["Title"] = "استعلام گواهینامه‌های آموزشی";
+    Layout = null;
+
+    // داده‌ی هر گواهینامه برای پر کردن قالب پرینت (سمت کلاینت) به‌صورت JSON آماده می‌شود
+    var certificatesForPrint = new List<object>();
+    if (Model?.Results != null)
+    {
+        foreach (var c in Model.Results)
+        {
+            certificatesForPrint.Add(new
+            {
+                fullName = c.FullName,
+                fatherName = c.FatherName,
+                nationalCode = Model!.NationalCode,
+                companyName = c.CompanyName,
+                examTitle = c.ExamTitle,
+                examDate = c.ExamDate.HasValue ? c.ExamDate.Value.ToString("yyyy/MM/dd") : "",
+                certNumber = c.CertificateNumber // اضافه شدن شماره گواهینامه به داده‌های ارسالی
+            });
+        }
+    }
+    var certificatesJson = System.Text.Json.JsonSerializer.Serialize(certificatesForPrint);
+}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --gold-glow: 0 0 20px rgba(255, 215, 0, 0.2);
+            --accent-gold: #ffd700;
+            --text-light: #f3f4f6;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a2536 0%, #0d131a 100%);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+            margin: 0;
+        }
+
+        .page-container {
+            position: relative;
+            min-height: 85vh;
+            padding: 2rem 0;
+            z-index: 2;
+        }
+
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .search-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), var(--gold-glow);
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+        }
+
+            .search-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(255, 215, 0, 0.3);
+                box-shadow: 0 30px 50px rgba(0,0,0,0.4), 0 0 30px rgba(255, 215, 0, 0.3);
+            }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 30%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.05);
+        }
+
+        .form-control-custom {
+            background: rgba(0, 0, 0, 0.25) !important;
+            border: 2px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            border-radius: 14px;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control-custom:focus {
+                border-color: var(--accent-gold) !important;
+                box-shadow: 0 0 15px rgba(255, 215, 0, 0.2) !important;
+                background: rgba(0, 0, 0, 0.4) !important;
+            }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
+            border: none;
+            color: #000;
+            font-weight: 700;
+            border-radius: 14px;
+            padding: 12px 30px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+            .btn-gold:hover {
+                transform: scale(1.03);
+                box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+                color: #000;
+            }
+
+        .certificate-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            transition: all 0.3s ease;
+        }
+
+            .certificate-card:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 215, 0, 0.2);
+                transform: translateY(-3px);
+            }
+
+        .badge-gold {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .text-muted-custom {
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #f0f6fc;
+            font-weight: 500;
+        }
+
+        .btn-print-cert {
+            background: transparent;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            color: var(--accent-gold);
+            border-radius: 10px;
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+            .btn-print-cert:hover {
+                background: rgba(255, 215, 0, 0.15);
+                color: var(--accent-gold);
+                border-color: var(--accent-gold);
+            }
+
+        #printCertificateTemplate {
+            display: none;
+        }
+
+        /* --- تنظیمات اختصاصی چاپ تک صفحه‌ای A4 افقی --- */
+        @@page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        body.is-printing-cert {
+            background: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: auto !important;
+        }
+
+        body.is-printing-cert > *:not(#printCertificateTemplate) {
+            display: none !important;
+        }
+
+        body.is-printing-cert #printCertificateTemplate {
+            display: block !important;
+        }
+
+        .cert-page {
+            width: 297mm;
+            height: 210mm;
+            max-height: 210mm;
+            box-sizing: border-box;
+            padding: 10mm 25mm 5mm 25mm;
+            direction: rtl;
+            color: #000;
+            font-family: 'B Nazanin', 'Tahoma', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative; /* برای پوزیشن‌دهی مطلق اجزای هدر */
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+        .cert-header-space {
+            height: 68mm;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        /* استایل مشخصات بالا سمت چپ گواهینامه */
+        .cert-header-meta {
+            position: absolute;
+            left: 0;
+            top: 25mm; /* فاصله از بالای کاغذ جهت هماهنگی با کادر چاپ‌شده */
+            text-align: right;
+            font-size: 13pt;
+            line-height: 1.8;
+            font-weight: bold;
+        }
+
+        .cert-main-text {
+            font-size: 17pt;
+            line-height: 2.0;
+            text-align: justify;
+            margin: 0;
+        }
+
+        .cert-sub-text {
+            font-size: 15pt;
+            line-height: 2.0;
+            text-align: justify;
+            margin: 5mm 0 0 0;
+        }
+
+        .cert-fill {
+            font-weight: 700;
+            padding: 0 4px;
+            display: inline-block;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .cert-signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20pt;
+        }
+
+        .cert-sig-block {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .cert-sig-name {
+            font-size: 17pt;
+        }
+
+        .cert-sig-title {
+            font-size: 13pt;
+            color: #333;
+        }
+
+        .cert-sig-line {
+            width: 150px;
+            height: 2px;
+            background: #000;
+            margin: 5px auto 8px auto;
+        }
+
+        .cert-stamp-space {
+            height: 15mm;
+            flex-shrink: 0;
+        }
+
+        .cert-footer-text {
+            text-align: center;
+            font-size: 12pt;
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        @@media print {
+            .cert-page {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="container page-container" dir="rtl">
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-7 text-center">
+                <h2 class="fw-bold mb-3 gradient-text">سامانه هوشمند استعلام گواهینامه‌ها</h2>
+                <p class="text-muted-custom fs-6">جهت مشاهده گواهینامه‌های آموزشی خود، کد ملی ده رقمی را وارد نمایید.</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card search-card p-4 p-md-5 mb-5">
+                    <form asp-action="Search" method="post" id="searchForm">
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger border-0 text-white mb-4" style="background: rgba(220, 53, 69, 0.2); border-right: 4px solid #dc3545 !important; border-radius: 12px;">
+                                <div asp-validation-summary="All" class="text-danger small"></div>
+                            </div>
+                        }
+
+                        <div class="mb-4">
+                            <label asp-for="NationalCode" class="form-label text-light fw-semibold mb-2">کد ملی</label>
+                            <div class="position-relative">
+                                <input asp-for="NationalCode"
+                                       class="form-control form-control-custom text-center"
+                                       placeholder="مثال: 1234567890"
+                                       maxlength="10"
+                                       autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="NationalCode" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-gold w-100 d-flex align-items-center justify-content-center gap-2 py-3">
+                            <span>بررسی و استعلام</span>
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @if (Model != null && Model.HasSearched)
+        {
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-10">
+                    @if (Model.Results != null && Model.Results.Any())
+                    {
+                        <h4 class="mb-4 text-light fw-bold d-flex align-items-center gap-2">
+                            <span class="badge badge-gold">@Model.Results.Count</span>
+                            <span>گواهینامه‌های یافت شده</span>
+                        </h4>
+
+                        <div class="row g-4">
+                            @{
+                                var certIndex = 0;
+                            }
+                            @foreach (var cert in Model.Results)
+                            {
+                                <div class="col-md-6">
+                                    <div class="card certificate-card h-100 p-4">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h5 class="text-white fw-bold mb-0">
+                                                <i class="bi bi-award text-warning me-1"></i> @cert.ExamTitle
+                                            </h5>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge badge-gold">شماره: @cert.CertificateNumber</span>
+                                                <button type="button"
+                                                        class="btn btn-print-cert"
+                                                        onclick="printCertificate(@certIndex)"
+                                                        title="پرینت گواهینامه">
+                                                    <i class="bi bi-printer"></i> پرینت
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <hr class="border-secondary opacity-25 my-3">
+
+                                        <div class="row g-3">
+                                            <div class="col-sm-6">
+                                                <div class="mb-2">
+                                                    <span class="text-muted-custom">نام و نام خانوادگی:</span>
+                                                    <span class="info-value ms-1">@cert.FullName</span>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <span class="text-muted-custom">نام پدر:</span>
+                                                    <span class="info-value ms-1">@cert.FatherName</span>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <span class="text-muted-custom">کد ملی:</span>
+                                                    <span class="info-value ms-1">@Model.NationalCode</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="mb-2">
+                                                    <span class="text-muted-custom">نام شرکت / ارگان:</span>
+                                                    <span class="info-value ms-1">@cert.CompanyName</span>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <span class="text-muted-custom">تاریخ آزمون:</span>
+                                                    <span class="info-value ms-1">
+                                                        @(cert.ExamDate.HasValue? cert.ExamDate.Value.ToString("yyyy/MM/dd") : "ثبت نشده")
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-3 pt-2 border-top border-secondary border-opacity-25 align-items-center">
+                                            <div class="col-6">
+                                                <span class="text-muted-custom">مدت دوره:</span>
+                                                <span class="badge bg-secondary ms-1">@cert.DurationHours ساعت</span>
+                                            </div>
+                                            <div class="col-6 text-end">
+                                                <span class="badge bg-opacity-10 bg-success text-success border border-success px-3 py-1">
+                                                    @cert.StatusDisplay
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                certIndex++;
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center p-5 rounded-4 border border-secondary border-opacity-25" style="background: rgba(255,255,255,0.02);">
+                            <i class="bi bi-exclamation-triangle text-warning display-4 mb-3 d-block"></i>
+                            <h5 class="text-white fw-bold">هیچ گواهینامه‌ای یافت نشد</h5>
+                            <p class="text-muted-custom small mb-0">برای کد ملی وارد شده، اطلاعاتی در سامانه آموزش ثبت نشده است.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- قالب پرینت مطابق فایل Word -->
+    <div id="printCertificateTemplate">
+        <div class="cert-page">
+            <!-- فضای خالی بالای صفحه همراه با شماره و تاریخ در سمت چپ -->
+            <div class="cert-header-space">
+                <div class="cert-header-meta">
+                    <div>شماره: <span id="pCertNumber"></span></div>
+                    <div>تاریخ: <span id="pCurrentDate"></span></div>
+                </div>
+            </div>
+
+            <!-- متن اصلی گواهینامه مطابق فایل Word -->
+            <p class="cert-main-text">
+                بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم
+                <span id="pFullName" class="cert-fill"></span>
+                فرزند
+                <span id="pFatherName" class="cert-fill"></span>
+                به شماره ملی
+                <span id="pNationalCode" class="cert-fill"></span>
+                از سوی شرکت
+                <span id="pCompanyName" class="cert-fill"></span>
+                در آزمون
+                <span id="pExamTitle" class="cert-fill"></span>
+                مورخ
+                <span id="pExamDate" class="cert-fill"></span>
+                شرکت نموده و حائز نمره قبول گردیده است.
+            </p>
+
+            <p class="cert-sub-text">
+                این گواهینامه به منزله قبولی درآزمون و فعالیت در شرکت مذکور صادر گردیده
+                و فاقد اعتبار جهت فعالیت در سایر شرکت‌ها می‌باشد.
+            </p>
+
+            <!-- امضاها مطابق فایل Word -->
+            <div class="cert-signatures">
+                <div class="cert-sig-block">
+                    <div class="cert-sig-line"></div>
+                    <div class="cert-sig-name">محمدرضا زهره‌وندی</div>
+                    <div class="cert-sig-title">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
+                </div>
+
+                <div class="cert-sig-block">
+                    <!-- فضای مهر که روی کاغذ چاپ شده -->
+                    <div style="height:60px; width:60px; border:2px dashed #ccc; border-radius:50%; margin:0 auto 5px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#999;">مهر</div>
+                </div>
+
+                <div class="cert-sig-block">
+                    <div class="cert-sig-line"></div>
+                    <div class="cert-sig-name">محمد وحیدی</div>
+                    <div class="cert-sig-title">مدیر عامل مرکز آموزش بازرگانی</div>
+                </div>
+            </div>
+
+            <!-- فضای خالی برای مهر پایین -->
+            <div class="cert-stamp-space"></div>
+
+            <!-- متن پایانی مطابق فایل Word -->
+            <p class="cert-footer-text">
+                <strong>اعتبار این گواهینامه یک سال از تاریخ آزمون بوده</strong>
+                و قبولی نهایی متوط به پذیرفته شدن در آزمون عملی سندیکای صنایع آسانسور و پله برقی ایران می‌باشد.
+            </p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // داده‌ی گواهینامه‌های همین نتیجه جستجو، برای پر کردن قالب پرینت
+        window.certificatesData = @Html.Raw(certificatesJson);
+
+        function printCertificate(index) {
+            var data = window.certificatesData[index];
+            if (!data) return;
+
+            // پر کردن مشخصات متن گواهینامه
+            document.getElementById('pFullName').textContent = data.fullName || '';
+            document.getElementById('pFatherName').textContent = data.fatherName || '';
+            document.getElementById('pNationalCode').textContent = data.nationalCode || '';
+            document.getElementById('pCompanyName').textContent = data.companyName || '';
+            document.getElementById('pExamTitle').textContent = data.examTitle || '';
+            document.getElementById('pExamDate').textContent = data.examDate || '';
+
+            // تنظیم شماره گواهینامه اختصاصی بالا سمت چپ
+            document.getElementById('pCertNumber').textContent = data.certNumber || '---';
+            
+            // تنظیم تاریخ روز جاری به شمسی برای تاریخ صدور بالا سمت چپ
+            var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            var todayPersian = new Date().toLocaleDateString('fa-IR', options);
+            document.getElementById('pCurrentDate').textContent = todayPersian;
+
+            document.body.classList.add('is-printing-cert');
+            window.print();
+        }
+
+        window.addEventListener('afterprint', function () {
+            document.body.classList.remove('is-printing-cert');
+        });
+
+        $(document).ready(function () {
+            $('#NationalCode').on('input', function () {
+                let value = this.value;
+                const persianNumbers = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+                const arabicNumbers = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+
+                for (let i = 0; i < 10; i++) {
+                    value = value.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
+                }
+
+                this.value = value.replace(/[^0-9]/g, '');
+            });
+
+            const canvas = document.getElementById('particles-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+                }
+
+                resizeCanvas();
+                $(window).on('resize', function() {
+                    resizeCanvas();
+                    init();
+                });
+
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                        this.size = Math.random() * 2 + 0.5;
+                        this.speedX = (Math.random() - 0.5) * 0.3;
+                        this.speedY = (Math.random() - 0.5) * 0.3;
+                        this.opacity = Math.random() * 0.3 + 0.1;
+                    }
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        if (this.x > canvas.width) this.x = 0;
+                        if (this.x < 0) this.x = canvas.width;
+                        if (this.y > canvas.height) this.y = 0;
+                        if (this.y < 0) this.y = canvas.height;
+                    }
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(255, 215, 0, ${this.opacity})`;
+                        ctx.fill();
+                    }
+                }
+
+                function init() {
+                    particles = [];
+                    for (let i = 0; i < 60; i++) {
+                        particles.push(new Particle());
+                    }
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        p.update();
+                        p.draw();
+                    });
+                    requestAnimationFrame(animate);
+                }
+
+                init();
+                animate();
+            }
+        });
+    </script>
+
+</body>
+</html>

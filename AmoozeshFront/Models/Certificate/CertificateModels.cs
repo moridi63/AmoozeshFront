@@ -1,0 +1,54 @@
+﻿using System.ComponentModel.DataAnnotations;
+using AmoozeshFront.Core.Enums;
+
+namespace AmoozeshFront.Models.Certificate
+{
+    // معادل CertificateDto سمت بک‌اند (کاملاً هماهنگ با کنترلر و ویو)
+    public class CertificateDto
+    {
+        public int Id { get; set; }
+
+        // تغییر نام برای هماهنگی با CertificateNo در کنترلر
+        public string CertificateNumber { get; set; }
+
+        public bool Gender { get; set; }
+        public string FullName { get; set; }
+        public string FatherName { get; set; }
+        public string NationalCode { get; set; }
+        public string CompanyName { get; set; }
+
+        public string ExamTitle { get; set; }
+
+        public DateTime? ExamDate { get; set; }
+        public int? DurationHours { get; set; } // اگر در بک‌اند وجود دارد
+
+        public CertificateStatus Status { get; set; }
+        public string StatusDisplay { get; set; }
+        public string Barcode { get; set; }
+        public DateTime? CreatedAt { get; set; }
+
+        public string GenderDisplay => Gender ? "زن" : "مرد";
+    }
+
+    // مدل صفحه‌ی جستجو (فرم + نتایج) - بدون تغییر و عالی
+    public class CertificateSearchViewModel
+    {
+        [Required(ErrorMessage = "کد ملی الزامی است")]
+        [RegularExpression(@"^[0-9]{10}$", ErrorMessage = "کد ملی باید 10 رقم باشد")]
+        [Display(Name = "کد ملی")]
+        public string NationalCode { get; set; }
+
+        public List<CertificateDto> Results { get; set; } = new();
+
+        public bool HasSearched { get; set; } = false;
+    }
+
+    // رَپر عمومی پاسخ‌های API - کاملاً درست و استاندارد
+    public class ApiListResponse<T>
+    {
+        public bool Success { get; set; }
+        public List<T> Data { get; set; } = new();
+        public int Count { get; set; }
+        public string Message { get; set; }
+    }
+}
