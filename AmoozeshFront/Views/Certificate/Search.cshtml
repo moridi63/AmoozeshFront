@@ -4,7 +4,6 @@
     ViewData["Title"] = "استعلام گواهینامه‌های آموزشی";
     Layout = null;
 
-    // داده‌ی هر گواهینامه برای پر کردن قالب پرینت (سمت کلاینت) به‌صورت JSON آماده می‌شود
     var certificatesForPrint = new List<object>();
     if (Model?.Results != null)
     {
@@ -18,7 +17,7 @@
                 companyName = c.CompanyName,
                 examTitle = c.ExamTitle,
                 examDate = c.ExamDate.HasValue ? c.ExamDate.Value.ToString("yyyy/MM/dd") : "",
-                certNumber = c.CertificateNumber // اضافه شدن شماره گواهینامه به داده‌های ارسالی
+                certNumber = c.CertificateNumber
             });
         }
     }
@@ -42,6 +41,72 @@
             --gold-glow: 0 0 20px rgba(255, 215, 0, 0.2);
             --accent-gold: #ffd700;
             --text-light: #f3f4f6;
+            /* =========================================================================
+                       تنظیمات قالب چاپ گواهینامه — پنل کنترل مرکزی
+                       برای هر کادر سه دسته مقدار دارید: موقعیت (top/left)، اندازه (width/height)
+                       و فونت (family/size). فقط همین مقادیر رو تغییر بدید.
+                       واحد اندازه‌گیری mm است و نسبت به صفحه‌ی A4 افقی (297mm × 210mm) سنجیده می‌شود.
+                       ========================================================================= */
+            /* حاشیه‌ی کادر دور تا دور صفحه (border همه‌ی کادرهای ریز) - برای حذف کامل خط دور
+                       کادرها مقدار رو به none تغییر بدید */
+            --cert-box-border: none;
+            --cert-font-default: 'B Nazanin', Tahoma, Arial, sans-serif;
+            /* --- ۱) کادر «شماره» (بالا-چپ) --- */
+            --number-box-top: 15mm;
+            --number-box-left: 12mm;
+            --number-box-width: 45mm;
+            --number-box-height: 10mm;
+            --number-box-font-family: var(--cert-font-default);
+            --number-box-font-size: 12pt;
+            /* --- ۲) کادر «تاریخ» (زیر کادر شماره) --- */
+            --date-box-top: 27mm;
+            --date-box-left: 12mm;
+            --date-box-width: 45mm;
+            --date-box-height: 10mm;
+            --date-box-font-family: var(--cert-font-default);
+            --date-box-font-size: 12pt;
+            /* --- ۳) کادر «لوگو» (بالا-وسط) --- */
+            --logo-box-top: 8mm;
+            --logo-box-left: 128mm;
+            --logo-box-width: 40mm;
+            --logo-box-height: 16mm;
+            --logo-box-font-family: var(--cert-font-default);
+            --logo-box-font-size: 12pt;
+            /* --- ۴) کادر «عنوان سر تیتر» (زیر لوگو) --- */
+            --title-box-top: 26mm;
+            --title-box-left: 108mm;
+            --title-box-width: 80mm;
+            --title-box-height: 16mm;
+            --title-box-font-family: var(--cert-font-default);
+            --title-box-font-size: 14pt;
+            /* --- ۵) کادر «بارکد» (بالا-راست) --- */
+            --barcode-box-top: 15mm;
+            --barcode-box-left: 235mm;
+            --barcode-box-width: 45mm;
+            --barcode-box-height: 18mm;
+            --barcode-box-font-family: var(--cert-font-default);
+            --barcode-box-font-size: 10pt;
+            /* --- ۶) کادر «متن اصلی» (وسط صفحه، عریض) --- */
+            --maintext-box-top: 62mm;
+            --maintext-box-left: 35mm;
+            --maintext-box-width: 227mm;
+            --maintext-box-height: 40mm;
+            --maintext-box-font-family: var(--cert-font-default);
+            --maintext-box-font-size: 15pt;
+            /* --- ۷) کادر «مدیرعامل» (پایین-چپ) --- */
+            --ceo1-box-top: 120mm;
+            --ceo1-box-left: 35mm;
+            --ceo1-box-width: 55mm;
+            --ceo1-box-height: 22mm;
+            --ceo1-box-font-family: var(--cert-font-default);
+            --ceo1-box-font-size: 13pt;
+            /* --- ۸) کادر «مدیرعامل دوم» (پایین-راست) --- */
+            --ceo2-box-top: 120mm;
+            --ceo2-box-left: 207mm;
+            --ceo2-box-width: 55mm;
+            --ceo2-box-height: 22mm;
+            --ceo2-box-font-family: var(--cert-font-default);
+            --ceo2-box-font-size: 13pt;
         }
 
         body {
@@ -197,107 +262,231 @@
             min-height: auto !important;
         }
 
-        body.is-printing-cert > *:not(#printCertificateTemplate) {
-            display: none !important;
-        }
+            body.is-printing-cert > *:not(#printCertificateTemplate) {
+                display: none !important;
+            }
 
-        body.is-printing-cert #printCertificateTemplate {
-            display: block !important;
-        }
+            body.is-printing-cert #printCertificateTemplate {
+                display: block !important;
+            }
 
+        /* =========================================================================
+                   صفحه‌ی گواهینامه — قاب بیرونی A4 افقی با خط دور کل صفحه
+                   ========================================================================= */
         .cert-page {
             width: 297mm;
             height: 210mm;
             max-height: 210mm;
             box-sizing: border-box;
-            padding: 10mm 25mm 5mm 25mm;
+            padding: 0;
             direction: rtl;
             color: #000;
-            font-family: 'B Nazanin', 'Tahoma', Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
+            font-family: var(--cert-font-default);
             overflow: hidden;
-            position: relative; /* برای پوزیشن‌دهی مطلق اجزای هدر */
+            position: relative; /* مرجع موقعیت‌دهی همه‌ی کادرهای ریز */
             page-break-inside: avoid;
             page-break-after: avoid;
+            background: #fff;
+            border: none; /* کادرها فقط برای چیدمانن، چاپ نمی‌شن */
         }
 
-        .cert-header-space {
-            height: 68mm;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        /* استایل مشخصات بالا سمت چپ گواهینامه */
-        .cert-header-meta {
+        /* کلاس پایه‌ی مشترک همه‌ی کادرهای ریز؛ هرکدوم با کلاس اختصاصی خودشون
+                   موقعیت/اندازه/فونت می‌گیرن (متغیرهای بالای فایل) */
+        .cert-box {
             position: absolute;
-            left: 0;
-            top: 25mm; /* فاصله از بالای کاغذ جهت هماهنگی با کادر چاپ‌شده */
-            text-align: right;
-            font-size: 13pt;
-            line-height: 1.8;
+            box-sizing: border-box;
+            border: var(--cert-box-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            padding: 2mm;
+            direction: rtl;
             font-weight: bold;
         }
 
-        .cert-main-text {
-            font-size: 17pt;
-            line-height: 2.0;
-            text-align: justify;
-            margin: 0;
+        /* --- ۱) کادر شماره --- */
+        .cert-box-number {
+            top: var(--number-box-top);
+            left: var(--number-box-left);
+            width: var(--number-box-width);
+            height: var(--number-box-height);
+            font-family: var(--number-box-font-family);
+            font-size: var(--number-box-font-size);
         }
 
-        .cert-sub-text {
-            font-size: 15pt;
+        /* --- ۲) کادر تاریخ --- */
+        .cert-box-date {
+            top: var(--date-box-top);
+            left: var(--date-box-left);
+            width: var(--date-box-width);
+            height: var(--date-box-height);
+            font-family: var(--date-box-font-family);
+            font-size: var(--date-box-font-size);
+        }
+
+        /* --- ۳) کادر لوگو --- */
+        .cert-box-logo {
+            top: var(--logo-box-top);
+            left: var(--logo-box-left);
+            width: var(--logo-box-width);
+            height: var(--logo-box-height);
+            font-family: var(--logo-box-font-family);
+            font-size: var(--logo-box-font-size);
+        }
+
+            .cert-box-logo img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+
+        /* --- ۴) کادر عنوان سر تیتر --- */
+        .cert-box-title {
+            top: var(--title-box-top);
+            left: var(--title-box-left);
+            width: var(--title-box-width);
+            height: var(--title-box-height);
+            font-family: var(--title-box-font-family);
+            font-size: var(--title-box-font-size);
+        }
+
+        /* --- ۵) کادر بارکد (فعلاً خالی - فرمول تولید بعداً اضافه می‌شود) --- */
+        .cert-box-barcode {
+            top: var(--barcode-box-top);
+            left: var(--barcode-box-left);
+            width: var(--barcode-box-width);
+            height: var(--barcode-box-height);
+            font-family: var(--barcode-box-font-family);
+            font-size: var(--barcode-box-font-size);
+        }
+
+            .cert-box-barcode img,
+            .cert-box-barcode svg {
+                max-width: 100%;
+                max-height: 100%;
+            }
+
+        /* --- ۶) کادر متن اصلی --- */
+        .cert-box-maintext {
+            top: var(--maintext-box-top);
+            left: var(--maintext-box-left);
+            width: var(--maintext-box-width);
+            height: var(--maintext-box-height);
+            font-family: var(--maintext-box-font-family);
+            font-size: var(--maintext-box-font-size);
+            font-weight: normal;
             line-height: 2.0;
             text-align: justify;
-            margin: 5mm 0 0 0;
         }
 
         .cert-fill {
             font-weight: 700;
             padding: 0 4px;
             display: inline-block;
-            min-width: 100px;
+            min-width: 90px;
             text-align: center;
         }
 
-        .cert-signatures {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20pt;
+        /* --- ۷) کادر مدیرعامل (چپ) --- */
+        .cert-box-ceo1 {
+            top: var(--ceo1-box-top);
+            left: var(--ceo1-box-left);
+            width: var(--ceo1-box-width);
+            height: var(--ceo1-box-height);
+            font-family: var(--ceo1-box-font-family);
+            font-size: var(--ceo1-box-font-size);
+            flex-direction: column;
+            gap: 2mm;
         }
 
-        .cert-sig-block {
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .cert-sig-name {
-            font-size: 17pt;
+        /* --- ۸) کادر مدیرعامل دوم (راست) --- */
+        .cert-box-ceo2 {
+            top: var(--ceo2-box-top);
+            left: var(--ceo2-box-left);
+            width: var(--ceo2-box-width);
+            height: var(--ceo2-box-height);
+            font-family: var(--ceo2-box-font-family);
+            font-size: var(--ceo2-box-font-size);
+            flex-direction: column;
+            gap: 2mm;
         }
 
         .cert-sig-title {
-            font-size: 13pt;
+            font-size: 0.75em;
+            font-weight: normal;
             color: #333;
         }
 
-        .cert-sig-line {
-            width: 150px;
-            height: 2px;
-            background: #000;
-            margin: 5px auto 8px auto;
+        /* =========================================================================
+                   پنل تنظیمات قالب چاپ (برای کاربر نهایی، از داخل مرورگر)
+                   ========================================================================= */
+        .btn-settings-cert {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            color: var(--accent-gold);
+            border-radius: 12px;
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
         }
 
-        .cert-stamp-space {
-            height: 15mm;
-            flex-shrink: 0;
+            .btn-settings-cert:hover {
+                background: rgba(255, 215, 0, 0.2);
+                color: var(--accent-gold);
+                border-color: var(--accent-gold);
+            }
+
+        .cert-box-field-group {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
         }
 
-        .cert-footer-text {
-            text-align: center;
-            font-size: 12pt;
-            margin: 0;
-            line-height: 1.7;
+            .cert-box-field-group h6 {
+                font-weight: 700;
+                margin-bottom: 10px;
+                color: #333;
+            }
+
+            .cert-box-field-group label {
+                font-size: 0.78rem;
+                color: #555;
+                margin-bottom: 2px;
+            }
+
+            .cert-box-field-group .form-control,
+            .cert-box-field-group .form-select {
+                font-size: 0.85rem;
+                padding: 4px 8px;
+            }
+
+        /* استیج پیش‌نمایش زنده - نسخه‌ی کوچک‌شده‌ی همان کادرها با متن نمونه */
+        .cert-preview-stage {
+            width: calc(297mm * 0.42);
+            height: calc(210mm * 0.42);
+            overflow: hidden;
+            border: 2px dashed #999;
+            margin: 0 auto;
+            background: #f1f2f4;
+            position: sticky;
+            top: 10px;
+        }
+
+        .cert-page-preview {
+            transform: scale(0.42);
+            transform-origin: top left;
+        }
+
+        @@media (max-width: 991px) {
+            .cert-preview-stage {
+                position: static;
+                width: 100%;
+                height: calc(100vw * 0.42 * (210 / 297));
+            }
         }
 
         @@media print {
@@ -316,6 +505,9 @@
             <div class="col-md-7 text-center">
                 <h2 class="fw-bold mb-3 gradient-text">سامانه هوشمند استعلام گواهینامه‌ها</h2>
                 <p class="text-muted-custom fs-6">جهت مشاهده گواهینامه‌های آموزشی خود، کد ملی ده رقمی را وارد نمایید.</p>
+                <button type="button" class="btn btn-settings-cert mt-2" data-bs-toggle="modal" data-bs-target="#certSettingsModal">
+                    <i class="bi bi-gear"></i> تنظیمات قالب چاپ گواهینامه
+                </button>
             </div>
         </div>
 
@@ -448,97 +640,199 @@
         }
     </div>
 
-    <!-- قالب پرینت مطابق فایل Word -->
+    <!-- ======================================== -->
+    <!-- قالب پرینت - طرح ۸ کادره مطابق اسکچ -->
+    <!-- ======================================== -->
     <div id="printCertificateTemplate">
         <div class="cert-page">
-            <!-- فضای خالی بالای صفحه همراه با شماره و تاریخ در سمت چپ -->
-            <div class="cert-header-space">
-                <div class="cert-header-meta">
-                    <div>شماره: <span id="pCertNumber"></span></div>
-                    <div>تاریخ: <span id="pCurrentDate"></span></div>
-                </div>
+
+            <!-- ۱) شماره -->
+            <div class="cert-box cert-box-number">شماره: <span id="pCertNumber"></span></div>
+
+            <!-- ۲) تاریخ -->
+            <div class="cert-box cert-box-date">تاریخ: <span id="pCurrentDate"></span></div>
+
+            <!-- ۳) لوگو - آدرس تصویر لوگو رو اینجا بذارید -->
+            <div class="cert-box cert-box-logo">
+                <img id="pLogo" src="" alt="لوگو" />
             </div>
 
-            <!-- متن اصلی گواهینامه مطابق فایل Word -->
-            <p class="cert-main-text">
-                بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم
-                <span id="pFullName" class="cert-fill"></span>
-                فرزند
-                <span id="pFatherName" class="cert-fill"></span>
-                به شماره ملی
-                <span id="pNationalCode" class="cert-fill"></span>
-                از سوی شرکت
-                <span id="pCompanyName" class="cert-fill"></span>
-                در آزمون
-                <span id="pExamTitle" class="cert-fill"></span>
-                مورخ
-                <span id="pExamDate" class="cert-fill"></span>
-                شرکت نموده و حائز نمره قبول گردیده است.
-            </p>
-
-            <p class="cert-sub-text">
-                این گواهینامه به منزله قبولی درآزمون و فعالیت در شرکت مذکور صادر گردیده
-                و فاقد اعتبار جهت فعالیت در سایر شرکت‌ها می‌باشد.
-            </p>
-
-            <!-- امضاها مطابق فایل Word -->
-            <div class="cert-signatures">
-                <div class="cert-sig-block">
-                    <div class="cert-sig-line"></div>
-                    <div class="cert-sig-name">محمدرضا زهره‌وندی</div>
-                    <div class="cert-sig-title">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
-                </div>
-
-                <div class="cert-sig-block">
-                    <!-- فضای مهر که روی کاغذ چاپ شده -->
-                    <div style="height:60px; width:60px; border:2px dashed #ccc; border-radius:50%; margin:0 auto 5px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#999;">مهر</div>
-                </div>
-
-                <div class="cert-sig-block">
-                    <div class="cert-sig-line"></div>
-                    <div class="cert-sig-name">محمد وحیدی</div>
-                    <div class="cert-sig-title">مدیر عامل مرکز آموزش بازرگانی</div>
-                </div>
+            <!-- ۴) عنوان سر تیتر - متن ثابت هدر گواهی؛ در صورت نیاز به مقدار پویا،
+                 مثل بقیه فیلدها با id در جاوااسکریپت پر کنید -->
+            <div class="cert-box cert-box-title">
+                <span id="pCertTitle">عنوان سر تیتر</span>
             </div>
 
-            <!-- فضای خالی برای مهر پایین -->
-            <div class="cert-stamp-space"></div>
+            <!-- ۵) بارکد - فعلاً خالی؛ طبق فرمولی که اعلام می‌کنید اینجا (پس از تولید)
+                 با innerHTML یا src یک <img>/<svg> پر خواهد شد -->
+            <div class="cert-box cert-box-barcode" id="pBarcode"></div>
 
-            <!-- متن پایانی مطابق فایل Word -->
-            <p class="cert-footer-text">
-                <strong>اعتبار این گواهینامه یک سال از تاریخ آزمون بوده</strong>
-                و قبولی نهایی متوط به پذیرفته شدن در آزمون عملی سندیکای صنایع آسانسور و پله برقی ایران می‌باشد.
-            </p>
+            <!-- ۶) متن اصلی -->
+            <div class="cert-box cert-box-maintext">
+                <p style="margin:0;">
+                    بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم
+                    <span id="pFullName" class="cert-fill"></span>
+                    فرزند
+                    <span id="pFatherName" class="cert-fill"></span>
+                    به شماره ملی
+                    <span id="pNationalCode" class="cert-fill"></span>
+                    از سوی شرکت
+                    <span id="pCompanyName" class="cert-fill"></span>
+                    در آزمون
+                    <span id="pExamTitle" class="cert-fill"></span>
+                    مورخ
+                    <span id="pExamDate" class="cert-fill"></span>
+                    شرکت نموده و حائز نمره قبول گردیده است.
+                </p>
+            </div>
+
+            <!-- ۷) مدیرعامل -->
+            <div class="cert-box cert-box-ceo1">
+                <div id="pCeo1Name">محمدرضا زهره‌وندی</div>
+                <div class="cert-sig-title" id="pCeo1Title">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
+            </div>
+
+            <!-- ۸) مدیرعامل دوم -->
+            <div class="cert-box cert-box-ceo2">
+                <div id="pCeo2Name">محمد وحیدی</div>
+                <div class="cert-sig-title" id="pCeo2Title">مدیر عامل مرکز آموزش بازرگانی</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================== -->
+    <!-- مودال تنظیمات قالب چاپ (برای کاربر نهایی) -->
+    <!-- ======================================== -->
+    <div class="modal fade" id="certSettingsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content" data-bs-theme="light">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">تنظیمات قالب چاپ گواهینامه</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <!-- فرم تنظیمات -->
+                        <div class="col-lg-7">
+                            <p class="text-muted small mb-3">
+                                مقادیر هر کادر با پیش‌فرض پر شده‌اند. هرچه رو بخواید تغییر بدید، بلافاصله در پیش‌نمایش کنار صفحه دیده می‌شه و به‌صورت خودکار ذخیره می‌شه.
+                            </p>
+
+                            <div class="cert-box-field-group">
+                                <h6><i class="bi bi-image"></i> لوگو</h6>
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-auto">
+                                        <img id="logoThumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:none;background:#fff;">
+                                    </div>
+                                    <div class="col">
+                                        <input type="file" id="logoUploadInput" class="form-control form-control-sm" accept="image/*">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" id="logoRemoveBtn" class="btn btn-sm btn-outline-danger">حذف لوگو</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cert-box-field-group">
+                                <h6><i class="bi bi-card-text"></i> متن‌های قابل ویرایش</h6>
+                                <div class="row g-2">
+                                    <div class="col-md-12">
+                                        <label>عنوان سر تیتر</label>
+                                        <input type="text" class="form-control form-control-sm" id="text-certTitle">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>نام مدیرعامل (چپ)</label>
+                                        <input type="text" class="form-control form-control-sm" id="text-ceo1Name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>سمت مدیرعامل (چپ)</label>
+                                        <input type="text" class="form-control form-control-sm" id="text-ceo1Title">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>نام مدیرعامل دوم (راست)</label>
+                                        <input type="text" class="form-control form-control-sm" id="text-ceo2Name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>سمت مدیرعامل دوم (راست)</label>
+                                        <input type="text" class="form-control form-control-sm" id="text-ceo2Title">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="certBoxAccordion"></div>
+                        </div>
+
+                        <!-- پیش‌نمایش زنده -->
+                        <div class="col-lg-5">
+                            <h6 class="fw-bold mb-2"><i class="bi bi-eye"></i> پیش‌نمایش زنده</h6>
+                            <div class="cert-preview-stage">
+                                <div class="cert-page cert-page-preview">
+                                    <div class="cert-box cert-box-number">شماره: <span>۱۲۳۴۵</span></div>
+                                    <div class="cert-box cert-box-date">تاریخ: <span>۱۴۰۵/۰۵/۰۱</span></div>
+                                    <div class="cert-box cert-box-logo"><img id="pLogoPreview" src="" alt="لوگو"></div>
+                                    <div class="cert-box cert-box-title"><span id="pCertTitlePreview">عنوان سر تیتر</span></div>
+                                    <div class="cert-box cert-box-barcode">بارکد نمونه</div>
+                                    <div class="cert-box cert-box-maintext">
+                                        <p style="margin:0;">
+                                            بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم <span class="cert-fill">نام نمونه</span>
+                                            فرزند <span class="cert-fill">نام پدر</span>
+                                            به شماره ملی <span class="cert-fill">۰۰۰۰۰۰۰۰۰۰</span>
+                                            از سوی شرکت <span class="cert-fill">نام شرکت</span>
+                                            در آزمون <span class="cert-fill">عنوان آزمون</span>
+                                            مورخ <span class="cert-fill">۱۴۰۵/۰۱/۰۱</span>
+                                            شرکت نموده و حائز نمره قبول گردیده است.
+                                        </p>
+                                    </div>
+                                    <div class="cert-box cert-box-ceo1">
+                                        <div id="pCeo1NamePreview">محمدرضا زهره‌وندی</div>
+                                        <div class="cert-sig-title" id="pCeo1TitlePreview">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
+                                    </div>
+                                    <div class="cert-box cert-box-ceo2">
+                                        <div id="pCeo2NamePreview">محمد وحیدی</div>
+                                        <div class="cert-sig-title" id="pCeo2TitlePreview">مدیر عامل مرکز آموزش بازرگانی</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-muted small text-center mt-2 mb-0">مقیاس ۴۲٪ اندازه‌ی واقعی A4 افقی</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" id="certSettingsResetBtn">بازگشت به پیش‌فرض</button>
+                    <button type="button" class="btn btn-gold" data-bs-dismiss="modal">تمام شد</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 
     <script>
-        // داده‌ی گواهینامه‌های همین نتیجه جستجو، برای پر کردن قالب پرینت
         window.certificatesData = @Html.Raw(certificatesJson);
 
         function printCertificate(index) {
             var data = window.certificatesData[index];
             if (!data) return;
 
-            // پر کردن مشخصات متن گواهینامه
             document.getElementById('pFullName').textContent = data.fullName || '';
             document.getElementById('pFatherName').textContent = data.fatherName || '';
             document.getElementById('pNationalCode').textContent = data.nationalCode || '';
             document.getElementById('pCompanyName').textContent = data.companyName || '';
             document.getElementById('pExamTitle').textContent = data.examTitle || '';
             document.getElementById('pExamDate').textContent = data.examDate || '';
-
-            // تنظیم شماره گواهینامه اختصاصی بالا سمت چپ
             document.getElementById('pCertNumber').textContent = data.certNumber || '---';
-            
-            // تنظیم تاریخ روز جاری به شمسی برای تاریخ صدور بالا سمت چپ
+
             var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
             var todayPersian = new Date().toLocaleDateString('fa-IR', options);
             document.getElementById('pCurrentDate').textContent = todayPersian;
+
+            // TODO: بارکد - وقتی فرمول تولید بارکد مشخص شد، اینجا خروجی رو
+            // داخل کادر #pBarcode قرار بدید، مثلاً:
+            // document.getElementById('pBarcode').innerHTML = generateBarcode(data.certNumber);
 
             document.body.classList.add('is-printing-cert');
             window.print();
@@ -547,6 +841,286 @@
         window.addEventListener('afterprint', function () {
             document.body.classList.remove('is-printing-cert');
         });
+
+        /* =====================================================================
+           پنل تنظیمات قالب چاپ - قابل تغییر توسط کاربر نهایی از داخل مرورگر
+           ===================================================================== */
+        (function () {
+            var STORAGE_KEY = 'certTemplateSettingsV1';
+
+            var BOX_DEFS = [
+                { key: 'number', label: 'شماره' },
+                { key: 'date', label: 'تاریخ' },
+                { key: 'logo', label: 'لوگو' },
+                { key: 'title', label: 'عنوان سر تیتر' },
+                { key: 'barcode', label: 'بارکد' },
+                { key: 'maintext', label: 'متن اصلی' },
+                { key: 'ceo1', label: 'مدیرعامل (چپ)' },
+                { key: 'ceo2', label: 'مدیرعامل دوم (راست)' }
+            ];
+
+            var FONT_OPTIONS = [
+                { value: "'B Nazanin', Tahoma, Arial, sans-serif", label: 'B Nazanin' },
+                { value: "'B Titr', Tahoma, Arial, sans-serif", label: 'B Titr' },
+                { value: "Tahoma, Arial, sans-serif", label: 'Tahoma' },
+                { value: "'IRANSans', Tahoma, Arial, sans-serif", label: 'IRANSans' },
+                { value: "Arial, sans-serif", label: 'Arial' }
+            ];
+
+            var DEFAULT_SETTINGS = {
+                number:   { top: 15, left: 12,  width: 45,  height: 10, font: FONT_OPTIONS[0].value, size: 12 },
+                date:     { top: 27, left: 12,  width: 45,  height: 10, font: FONT_OPTIONS[0].value, size: 12 },
+                logo:     { top: 8,  left: 128, width: 40,  height: 16, font: FONT_OPTIONS[0].value, size: 12 },
+                title:    { top: 26, left: 108, width: 80,  height: 16, font: FONT_OPTIONS[0].value, size: 14 },
+                barcode:  { top: 15, left: 235, width: 45,  height: 18, font: FONT_OPTIONS[0].value, size: 10 },
+                maintext: { top: 62, left: 35,  width: 227, height: 40, font: FONT_OPTIONS[0].value, size: 15 },
+                ceo1:     { top: 120, left: 35, width: 55,  height: 22, font: FONT_OPTIONS[0].value, size: 13 },
+                ceo2:     { top: 120, left: 207, width: 55, height: 22, font: FONT_OPTIONS[0].value, size: 13 },
+                texts: {
+                    certTitle: 'عنوان سر تیتر',
+                    ceo1Name: 'محمدرضا زهره‌وندی',
+                    ceo1Title: 'رئیس هیأت‌مدیره سندیکای صنایع آسانسور',
+                    ceo2Name: 'محمد وحیدی',
+                    ceo2Title: 'مدیر عامل مرکز آموزش بازرگانی'
+                },
+                logoSrc: ''
+            };
+
+            function cloneDefaults() {
+                return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+            }
+
+            function loadSettings() {
+                var settings = cloneDefaults();
+                try {
+                    var raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        var saved = JSON.parse(raw);
+                        BOX_DEFS.forEach(function (box) {
+                            if (saved[box.key]) {
+                                settings[box.key] = Object.assign({}, settings[box.key], saved[box.key]);
+                            }
+                        });
+                        if (saved.texts) {
+                            settings.texts = Object.assign({}, settings.texts, saved.texts);
+                        }
+                        if (typeof saved.logoSrc === 'string') {
+                            settings.logoSrc = saved.logoSrc;
+                        }
+                    }
+                } catch (e) {
+                    console.error('خطا در خواندن تنظیمات ذخیره‌شده:', e);
+                }
+                return settings;
+            }
+
+            function saveSettings(settings) {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+                } catch (e) {
+                    console.error('خطا در ذخیره تنظیمات:', e);
+                }
+            }
+
+            function applySettings(settings) {
+                var root = document.documentElement.style;
+                BOX_DEFS.forEach(function (box) {
+                    var b = settings[box.key];
+                    root.setProperty('--' + box.key + '-box-top', b.top + 'mm');
+                    root.setProperty('--' + box.key + '-box-left', b.left + 'mm');
+                    root.setProperty('--' + box.key + '-box-width', b.width + 'mm');
+                    root.setProperty('--' + box.key + '-box-height', b.height + 'mm');
+                    root.setProperty('--' + box.key + '-box-font-family', b.font);
+                    root.setProperty('--' + box.key + '-box-font-size', b.size + 'pt');
+                });
+
+                // متن‌ها - هم در قالب واقعی چاپ و هم در پیش‌نمایش
+                setText('pCertTitle', settings.texts.certTitle);
+                setText('pCertTitlePreview', settings.texts.certTitle);
+                setText('pCeo1Name', settings.texts.ceo1Name);
+                setText('pCeo1NamePreview', settings.texts.ceo1Name);
+                setText('pCeo1Title', settings.texts.ceo1Title);
+                setText('pCeo1TitlePreview', settings.texts.ceo1Title);
+                setText('pCeo2Name', settings.texts.ceo2Name);
+                setText('pCeo2NamePreview', settings.texts.ceo2Name);
+                setText('pCeo2Title', settings.texts.ceo2Title);
+                setText('pCeo2TitlePreview', settings.texts.ceo2Title);
+
+                // لوگو
+                setLogoSrc('pLogo', settings.logoSrc);
+                setLogoSrc('pLogoPreview', settings.logoSrc);
+                var thumb = document.getElementById('logoThumb');
+                if (thumb) {
+                    if (settings.logoSrc) {
+                        thumb.src = settings.logoSrc;
+                        thumb.style.display = 'inline-block';
+                    } else {
+                        thumb.style.display = 'none';
+                    }
+                }
+            }
+
+            function setText(id, value) {
+                var el = document.getElementById(id);
+                if (el) el.textContent = value || '';
+            }
+
+            function setLogoSrc(id, src) {
+                var el = document.getElementById(id);
+                if (el) el.src = src || '';
+            }
+
+            function fieldId(boxKey, prop) {
+                return 'box-' + boxKey + '-' + prop;
+            }
+
+            function buildFontOptionsHtml(selected) {
+                return FONT_OPTIONS.map(function (f) {
+                    var sel = f.value === selected ? ' selected' : '';
+                    return '<option value="' + f.value.replace(/"/g, '&quot;') + '"' + sel + '>' + f.label + '</option>';
+                }).join('');
+            }
+
+            function buildAccordionForm(settings) {
+                var container = document.getElementById('certBoxAccordion');
+                if (!container) return;
+
+                var html = BOX_DEFS.map(function (box) {
+                    var b = settings[box.key];
+                    return '' +
+                        '<div class="cert-box-field-group">' +
+                        '  <h6><i class="bi bi-bounding-box"></i> ' + box.label + '</h6>' +
+                        '  <div class="row g-2">' +
+                        '    <div class="col-3"><label>بالا (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'top') + '" value="' + b.top + '"></div>' +
+                        '    <div class="col-3"><label>چپ (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'left') + '" value="' + b.left + '"></div>' +
+                        '    <div class="col-3"><label>عرض (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'width') + '" value="' + b.width + '"></div>' +
+                        '    <div class="col-3"><label>ارتفاع (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'height') + '" value="' + b.height + '"></div>' +
+                        '    <div class="col-8"><label>فونت</label><select class="form-select form-select-sm" id="' + fieldId(box.key, 'font') + '">' + buildFontOptionsHtml(b.font) + '</select></div>' +
+                        '    <div class="col-4"><label>سایز فونت (pt)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'size') + '" value="' + b.size + '"></div>' +
+                        '  </div>' +
+                        '</div>';
+                }).join('');
+
+                container.innerHTML = html;
+
+                BOX_DEFS.forEach(function (box) {
+                    ['top', 'left', 'width', 'height', 'size'].forEach(function (prop) {
+                        var input = document.getElementById(fieldId(box.key, prop));
+                        if (input) {
+                            input.addEventListener('input', function () {
+                                var num = parseFloat(input.value);
+                                if (isNaN(num)) return;
+                                currentSettings[box.key][prop] = num;
+                                applySettings(currentSettings);
+                                saveSettings(currentSettings);
+                            });
+                        }
+                    });
+                    var fontSelect = document.getElementById(fieldId(box.key, 'font'));
+                    if (fontSelect) {
+                        fontSelect.addEventListener('change', function () {
+                            currentSettings[box.key].font = fontSelect.value;
+                            applySettings(currentSettings);
+                            saveSettings(currentSettings);
+                        });
+                    }
+                });
+            }
+
+            function populateTextInputs(settings) {
+                var map = {
+                    'text-certTitle': settings.texts.certTitle,
+                    'text-ceo1Name': settings.texts.ceo1Name,
+                    'text-ceo1Title': settings.texts.ceo1Title,
+                    'text-ceo2Name': settings.texts.ceo2Name,
+                    'text-ceo2Title': settings.texts.ceo2Title
+                };
+                Object.keys(map).forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el) el.value = map[id] || '';
+                });
+            }
+
+            function bindTextInputs() {
+                var pairs = [
+                    ['text-certTitle', 'certTitle'],
+                    ['text-ceo1Name', 'ceo1Name'],
+                    ['text-ceo1Title', 'ceo1Title'],
+                    ['text-ceo2Name', 'ceo2Name'],
+                    ['text-ceo2Title', 'ceo2Title']
+                ];
+                pairs.forEach(function (pair) {
+                    var el = document.getElementById(pair[0]);
+                    if (el) {
+                        el.addEventListener('input', function () {
+                            currentSettings.texts[pair[1]] = el.value;
+                            applySettings(currentSettings);
+                            saveSettings(currentSettings);
+                        });
+                    }
+                });
+            }
+
+            function bindLogoUpload() {
+                var input = document.getElementById('logoUploadInput');
+                var removeBtn = document.getElementById('logoRemoveBtn');
+                if (input) {
+                    input.addEventListener('change', function () {
+                        var file = input.files && input.files[0];
+                        if (!file) return;
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            currentSettings.logoSrc = e.target.result;
+                            applySettings(currentSettings);
+                            saveSettings(currentSettings);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function () {
+                        currentSettings.logoSrc = '';
+                        if (input) input.value = '';
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                    });
+                }
+            }
+
+            function bindResetButton() {
+                var btn = document.getElementById('certSettingsResetBtn');
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        currentSettings = cloneDefaults();
+                        saveSettings(currentSettings);
+                        applySettings(currentSettings);
+                        buildAccordionForm(currentSettings);
+                        populateTextInputs(currentSettings);
+                        var logoInput = document.getElementById('logoUploadInput');
+                        if (logoInput) logoInput.value = '';
+                    });
+                }
+            }
+
+            var currentSettings = loadSettings();
+
+            document.addEventListener('DOMContentLoaded', function () {
+                applySettings(currentSettings);
+                buildAccordionForm(currentSettings);
+                populateTextInputs(currentSettings);
+                bindTextInputs();
+                bindLogoUpload();
+                bindResetButton();
+
+                var modalEl = document.getElementById('certSettingsModal');
+                if (modalEl) {
+                    modalEl.addEventListener('shown.bs.modal', function () {
+                        buildAccordionForm(currentSettings);
+                        populateTextInputs(currentSettings);
+                    });
+                }
+            });
+        })();
 
         $(document).ready(function () {
             $('#NationalCode').on('input', function () {
@@ -572,7 +1146,7 @@
                 }
 
                 resizeCanvas();
-                $(window).on('resize', function() {
+                $(window).on('resize', function () {
                     resizeCanvas();
                     init();
                 });

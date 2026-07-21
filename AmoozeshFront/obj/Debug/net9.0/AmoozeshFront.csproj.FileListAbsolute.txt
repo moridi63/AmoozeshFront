@@ -97,3 +97,4 @@ C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\Amooze
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\ref\AmoozeshFront.dll
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\dotnet-tools.json
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\AmoozeshFront.sourcelink.json
