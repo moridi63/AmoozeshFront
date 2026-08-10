@@ -11,13 +11,15 @@
         {
             certificatesForPrint.Add(new
             {
+                id = c.Id,
                 fullName = c.FullName,
                 fatherName = c.FatherName,
                 nationalCode = Model!.NationalCode,
                 companyName = c.CompanyName,
                 examTitle = c.ExamTitle,
                 examDate = c.ExamDate.HasValue ? c.ExamDate.Value.ToString("yyyy/MM/dd") : "",
-                certNumber = c.CertificateNumber
+                certNumber = c.CertificateNumber,
+                qrCodeBase64 = c.QRCodeBase64
             });
         }
     }
@@ -41,70 +43,54 @@
             --gold-glow: 0 0 20px rgba(255, 215, 0, 0.2);
             --accent-gold: #ffd700;
             --text-light: #f3f4f6;
-            /* =========================================================================
-                       تنظیمات قالب چاپ گواهینامه — پنل کنترل مرکزی
-                       برای هر کادر سه دسته مقدار دارید: موقعیت (top/left)، اندازه (width/height)
-                       و فونت (family/size). فقط همین مقادیر رو تغییر بدید.
-                       واحد اندازه‌گیری mm است و نسبت به صفحه‌ی A4 افقی (297mm × 210mm) سنجیده می‌شود.
-                       ========================================================================= */
-            /* حاشیه‌ی کادر دور تا دور صفحه (border همه‌ی کادرهای ریز) - برای حذف کامل خط دور
-                       کادرها مقدار رو به none تغییر بدید */
             --cert-box-border: none;
             --cert-font-default: 'B Nazanin', Tahoma, Arial, sans-serif;
-            /* --- ۱) کادر «شماره» (بالا-چپ) --- */
             --number-box-top: 15mm;
             --number-box-left: 12mm;
             --number-box-width: 45mm;
             --number-box-height: 10mm;
             --number-box-font-family: var(--cert-font-default);
             --number-box-font-size: 12pt;
-            /* --- ۲) کادر «تاریخ» (زیر کادر شماره) --- */
             --date-box-top: 27mm;
             --date-box-left: 12mm;
             --date-box-width: 45mm;
             --date-box-height: 10mm;
             --date-box-font-family: var(--cert-font-default);
             --date-box-font-size: 12pt;
-            /* --- ۳) کادر «لوگو» (بالا-وسط) --- */
             --logo-box-top: 8mm;
             --logo-box-left: 128mm;
             --logo-box-width: 40mm;
             --logo-box-height: 16mm;
             --logo-box-font-family: var(--cert-font-default);
             --logo-box-font-size: 12pt;
-            /* --- ۴) کادر «عنوان سر تیتر» (زیر لوگو) --- */
             --title-box-top: 26mm;
             --title-box-left: 108mm;
             --title-box-width: 80mm;
             --title-box-height: 16mm;
             --title-box-font-family: var(--cert-font-default);
             --title-box-font-size: 14pt;
-            /* --- ۵) کادر «بارکد» (بالا-راست) --- */
             --barcode-box-top: 15mm;
             --barcode-box-left: 235mm;
             --barcode-box-width: 45mm;
             --barcode-box-height: 18mm;
             --barcode-box-font-family: var(--cert-font-default);
             --barcode-box-font-size: 10pt;
-            /* --- ۶) کادر «متن اصلی» (وسط صفحه، عریض) --- */
             --maintext-box-top: 62mm;
             --maintext-box-left: 35mm;
             --maintext-box-width: 227mm;
             --maintext-box-height: 40mm;
             --maintext-box-font-family: var(--cert-font-default);
             --maintext-box-font-size: 15pt;
-            /* --- ۷) کادر «مدیرعامل» (پایین-چپ) --- */
-            --ceo1-box-top: 120mm;
+            --ceo1-box-top: 110mm;
             --ceo1-box-left: 35mm;
             --ceo1-box-width: 55mm;
-            --ceo1-box-height: 22mm;
+            --ceo1-box-height: 28mm;
             --ceo1-box-font-family: var(--cert-font-default);
             --ceo1-box-font-size: 13pt;
-            /* --- ۸) کادر «مدیرعامل دوم» (پایین-راست) --- */
-            --ceo2-box-top: 120mm;
+            --ceo2-box-top: 110mm;
             --ceo2-box-left: 207mm;
             --ceo2-box-width: 55mm;
-            --ceo2-box-height: 22mm;
+            --ceo2-box-height: 28mm;
             --ceo2-box-font-family: var(--cert-font-default);
             --ceo2-box-font-size: 13pt;
         }
@@ -245,11 +231,93 @@
                 border-color: var(--accent-gold);
             }
 
+        /* ===== استایل‌های QR Code ===== */
+        .qr-code-small {
+            width: 65px;
+            height: 65px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 4px;
+            background: white;
+            object-fit: contain;
+        }
+
+            .qr-code-small:hover {
+                transform: scale(1.15);
+                border-color: var(--accent-gold);
+                box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            }
+
+        .qr-code-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .qr-code-label {
+            font-size: 0.7rem;
+            color: #8b949e;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .modal-content-dark {
+            background: #1a2536 !important;
+            border: 1px solid rgba(255, 215, 0, 0.3) !important;
+            border-radius: 20px !important;
+        }
+
+        .qr-modal-image-container {
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            display: inline-block;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+        }
+
+        /* ===== استایل‌های امضا ===== */
+        .signature-preview {
+            max-width: 100px;
+            max-height: 40px;
+            object-fit: contain;
+            border: 1px dashed #dee2e6;
+            border-radius: 6px;
+            padding: 4px;
+            background: white;
+        }
+
+        .signature-thumb {
+            width: 80px;
+            height: 30px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            padding: 2px;
+        }
+
+        .signature-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+            .signature-container .btn-sm {
+                font-size: 0.7rem;
+                padding: 2px 8px;
+            }
+
+        /* ===== تنظیمات چاپ ===== */
         #printCertificateTemplate {
             display: none;
         }
 
-        /* --- تنظیمات اختصاصی چاپ تک صفحه‌ای A4 افقی --- */
         @@page {
             size: A4 landscape;
             margin: 0;
@@ -270,9 +338,6 @@
                 display: block !important;
             }
 
-        /* =========================================================================
-                   صفحه‌ی گواهینامه — قاب بیرونی A4 افقی با خط دور کل صفحه
-                   ========================================================================= */
         .cert-page {
             width: 297mm;
             height: 210mm;
@@ -283,15 +348,12 @@
             color: #000;
             font-family: var(--cert-font-default);
             overflow: hidden;
-            position: relative; /* مرجع موقعیت‌دهی همه‌ی کادرهای ریز */
+            position: relative;
             page-break-inside: avoid;
             page-break-after: avoid;
             background: #fff;
-            border: none; /* کادرها فقط برای چیدمانن، چاپ نمی‌شن */
         }
 
-        /* کلاس پایه‌ی مشترک همه‌ی کادرهای ریز؛ هرکدوم با کلاس اختصاصی خودشون
-                   موقعیت/اندازه/فونت می‌گیرن (متغیرهای بالای فایل) */
         .cert-box {
             position: absolute;
             box-sizing: border-box;
@@ -306,7 +368,6 @@
             font-weight: bold;
         }
 
-        /* --- ۱) کادر شماره --- */
         .cert-box-number {
             top: var(--number-box-top);
             left: var(--number-box-left);
@@ -316,7 +377,6 @@
             font-size: var(--number-box-font-size);
         }
 
-        /* --- ۲) کادر تاریخ --- */
         .cert-box-date {
             top: var(--date-box-top);
             left: var(--date-box-left);
@@ -326,7 +386,6 @@
             font-size: var(--date-box-font-size);
         }
 
-        /* --- ۳) کادر لوگو --- */
         .cert-box-logo {
             top: var(--logo-box-top);
             left: var(--logo-box-left);
@@ -342,7 +401,6 @@
                 object-fit: contain;
             }
 
-        /* --- ۴) کادر عنوان سر تیتر --- */
         .cert-box-title {
             top: var(--title-box-top);
             left: var(--title-box-left);
@@ -352,7 +410,6 @@
             font-size: var(--title-box-font-size);
         }
 
-        /* --- ۵) کادر بارکد (فعلاً خالی - فرمول تولید بعداً اضافه می‌شود) --- */
         .cert-box-barcode {
             top: var(--barcode-box-top);
             left: var(--barcode-box-left);
@@ -366,9 +423,9 @@
             .cert-box-barcode svg {
                 max-width: 100%;
                 max-height: 100%;
+                object-fit: contain;
             }
 
-        /* --- ۶) کادر متن اصلی --- */
         .cert-box-maintext {
             top: var(--maintext-box-top);
             left: var(--maintext-box-left);
@@ -389,7 +446,6 @@
             text-align: center;
         }
 
-        /* --- ۷) کادر مدیرعامل (چپ) --- */
         .cert-box-ceo1 {
             top: var(--ceo1-box-top);
             left: var(--ceo1-box-left);
@@ -398,10 +454,9 @@
             font-family: var(--ceo1-box-font-family);
             font-size: var(--ceo1-box-font-size);
             flex-direction: column;
-            gap: 2mm;
+            gap: 1mm;
         }
 
-        /* --- ۸) کادر مدیرعامل دوم (راست) --- */
         .cert-box-ceo2 {
             top: var(--ceo2-box-top);
             left: var(--ceo2-box-left);
@@ -410,18 +465,22 @@
             font-family: var(--ceo2-box-font-family);
             font-size: var(--ceo2-box-font-size);
             flex-direction: column;
-            gap: 2mm;
+            gap: 1mm;
         }
 
         .cert-sig-title {
-            font-size: 0.75em;
+            font-size: 0.7em;
             font-weight: normal;
             color: #333;
         }
 
-        /* =========================================================================
-                   پنل تنظیمات قالب چاپ (برای کاربر نهایی، از داخل مرورگر)
-                   ========================================================================= */
+        .cert-signature-img {
+            max-width: 60mm;
+            max-height: 12mm;
+            object-fit: contain;
+        }
+
+        /* ===== تنظیمات قالب چاپ ===== */
         .btn-settings-cert {
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.4);
@@ -464,7 +523,6 @@
                 padding: 4px 8px;
             }
 
-        /* استیج پیش‌نمایش زنده - نسخه‌ی کوچک‌شده‌ی همان کادرها با متن نمونه */
         .cert-preview-stage {
             width: calc(297mm * 0.42);
             height: calc(210mm * 0.42);
@@ -607,13 +665,33 @@
                                                         @(cert.ExamDate.HasValue? cert.ExamDate.Value.ToString("yyyy/MM/dd") : "ثبت نشده")
                                                     </span>
                                                 </div>
+                                                <div class="mb-2">
+                                                    <div class="qr-code-container">
+                                                        <span class="text-muted-custom">بارکد دوبعدی:</span>
+                                                        @if (!string.IsNullOrEmpty(cert.QRCodeBase64))
+                                                        {
+                                                            <img src="data:image/png;base64,@cert.QRCodeBase64"
+                                                                 class="qr-code-small"
+                                                                 onclick="showQRCodeModal('@cert.QRCodeBase64', '@cert.FullName', '@cert.CertificateNumber')"
+                                                                 title="برای بزرگنمایی کلیک کنید"
+                                                                 alt="QR Code" />
+                                                            <span class="qr-code-label">
+                                                                <i class="bi bi-info-circle"></i> کلیک کنید
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted-custom">بارکد موجود نیست</span>
+                                                        }
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="row mt-3 pt-2 border-top border-secondary border-opacity-25 align-items-center">
                                             <div class="col-6">
                                                 <span class="text-muted-custom">مدت دوره:</span>
-                                                <span class="badge bg-secondary ms-1">@cert.DurationHours ساعت</span>
+                                                <span class="badge bg-secondary ms-1">@(cert.DurationHours.HasValue ? $"{cert.DurationHours} ساعت" : "نامشخص")</span>
                                             </div>
                                             <div class="col-6 text-end">
                                                 <span class="badge bg-opacity-10 bg-success text-success border border-success px-3 py-1">
@@ -640,34 +718,51 @@
         }
     </div>
 
-    <!-- ======================================== -->
-    <!-- قالب پرینت - طرح ۸ کادره مطابق اسکچ -->
-    <!-- ======================================== -->
+    <!-- ===== Modal نمایش QR Code بزرگ ===== -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content modal-content-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white" id="qrModalTitle">
+                        <i class="bi bi-qr-code text-warning"></i> بارکد گواهینامه
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <div class="qr-modal-image-container">
+                        <img id="qrModalImage" src="" alt="QR Code" style="width: 250px; height: 250px;" />
+                    </div>
+                    <div class="mt-3">
+                        <span class="text-light" id="qrModalInfo">اسکن کنید</span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="badge bg-warning text-dark px-3 py-2">برای تایید گواهینامه اسکن کنید</span>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center gap-2">
+                    <button type="button" class="btn btn-sm btn-gold" onclick="downloadQRCode()">
+                        <i class="bi bi-download"></i> دانلود QR Code
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary text-white" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i> بستن
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== قالب پرینت با امضا ===== -->
     <div id="printCertificateTemplate">
         <div class="cert-page">
-
-            <!-- ۱) شماره -->
             <div class="cert-box cert-box-number">شماره: <span id="pCertNumber"></span></div>
-
-            <!-- ۲) تاریخ -->
             <div class="cert-box cert-box-date">تاریخ: <span id="pCurrentDate"></span></div>
-
-            <!-- ۳) لوگو - آدرس تصویر لوگو رو اینجا بذارید -->
             <div class="cert-box cert-box-logo">
                 <img id="pLogo" src="" alt="لوگو" />
             </div>
-
-            <!-- ۴) عنوان سر تیتر - متن ثابت هدر گواهی؛ در صورت نیاز به مقدار پویا،
-                 مثل بقیه فیلدها با id در جاوااسکریپت پر کنید -->
             <div class="cert-box cert-box-title">
-                <span id="pCertTitle">عنوان سر تیتر</span>
+                <span id="pCertTitle">گواهینامه آموزشی</span>
             </div>
-
-            <!-- ۵) بارکد - فعلاً خالی؛ طبق فرمولی که اعلام می‌کنید اینجا (پس از تولید)
-                 با innerHTML یا src یک <img>/<svg> پر خواهد شد -->
             <div class="cert-box cert-box-barcode" id="pBarcode"></div>
-
-            <!-- ۶) متن اصلی -->
             <div class="cert-box cert-box-maintext">
                 <p style="margin:0;">
                     بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم
@@ -685,25 +780,20 @@
                     شرکت نموده و حائز نمره قبول گردیده است.
                 </p>
             </div>
-
-            <!-- ۷) مدیرعامل -->
             <div class="cert-box cert-box-ceo1">
                 <div id="pCeo1Name">محمدرضا زهره‌وندی</div>
+                <img id="pCeo1Signature" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
                 <div class="cert-sig-title" id="pCeo1Title">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
             </div>
-
-            <!-- ۸) مدیرعامل دوم -->
             <div class="cert-box cert-box-ceo2">
                 <div id="pCeo2Name">محمد وحیدی</div>
+                <img id="pCeo2Signature" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
                 <div class="cert-sig-title" id="pCeo2Title">مدیر عامل مرکز آموزش بازرگانی</div>
             </div>
-
         </div>
     </div>
 
-    <!-- ======================================== -->
-    <!-- مودال تنظیمات قالب چاپ (برای کاربر نهایی) -->
-    <!-- ======================================== -->
+    <!-- ===== مودال تنظیمات قالب چاپ با امضا ===== -->
     <div class="modal fade" id="certSettingsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content" data-bs-theme="light">
@@ -713,7 +803,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="row g-4">
-                        <!-- فرم تنظیمات -->
                         <div class="col-lg-7">
                             <p class="text-muted small mb-3">
                                 مقادیر هر کادر با پیش‌فرض پر شده‌اند. هرچه رو بخواید تغییر بدید، بلافاصله در پیش‌نمایش کنار صفحه دیده می‌شه و به‌صورت خودکار ذخیره می‌شه.
@@ -760,10 +849,33 @@
                                 </div>
                             </div>
 
+                            <!-- بخش آپلود امضا -->
+                            <div class="cert-box-field-group">
+                                <h6><i class="bi bi-pen"></i> امضاها</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="fw-bold">امضای مدیرعامل (چپ)</label>
+                                        <div class="signature-container">
+                                            <img id="ceo1SigThumb" class="signature-thumb" src="" alt="امضا" style="display:none;" />
+                                            <input type="file" id="ceo1SigUpload" class="form-control form-control-sm" accept="image/*" />
+                                            <button type="button" id="ceo1SigRemove" class="btn btn-sm btn-outline-danger">حذف امضا</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fw-bold">امضای مدیرعامل (راست)</label>
+                                        <div class="signature-container">
+                                            <img id="ceo2SigThumb" class="signature-thumb" src="" alt="امضا" style="display:none;" />
+                                            <input type="file" id="ceo2SigUpload" class="form-control form-control-sm" accept="image/*" />
+                                            <button type="button" id="ceo2SigRemove" class="btn btn-sm btn-outline-danger">حذف امضا</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="text-muted">تصویر امضا با فرمت PNG با پس‌زمینه شفاف توصیه می‌شود.</small>
+                            </div>
+
                             <div id="certBoxAccordion"></div>
                         </div>
 
-                        <!-- پیش‌نمایش زنده -->
                         <div class="col-lg-5">
                             <h6 class="fw-bold mb-2"><i class="bi bi-eye"></i> پیش‌نمایش زنده</h6>
                             <div class="cert-preview-stage">
@@ -771,7 +883,7 @@
                                     <div class="cert-box cert-box-number">شماره: <span>۱۲۳۴۵</span></div>
                                     <div class="cert-box cert-box-date">تاریخ: <span>۱۴۰۵/۰۵/۰۱</span></div>
                                     <div class="cert-box cert-box-logo"><img id="pLogoPreview" src="" alt="لوگو"></div>
-                                    <div class="cert-box cert-box-title"><span id="pCertTitlePreview">عنوان سر تیتر</span></div>
+                                    <div class="cert-box cert-box-title"><span id="pCertTitlePreview">گواهینامه آموزشی</span></div>
                                     <div class="cert-box cert-box-barcode">بارکد نمونه</div>
                                     <div class="cert-box cert-box-maintext">
                                         <p style="margin:0;">
@@ -786,10 +898,12 @@
                                     </div>
                                     <div class="cert-box cert-box-ceo1">
                                         <div id="pCeo1NamePreview">محمدرضا زهره‌وندی</div>
+                                        <img id="pCeo1SigPreview" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
                                         <div class="cert-sig-title" id="pCeo1TitlePreview">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
                                     </div>
                                     <div class="cert-box cert-box-ceo2">
                                         <div id="pCeo2NamePreview">محمد وحیدی</div>
+                                        <img id="pCeo2SigPreview" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
                                         <div class="cert-sig-title" id="pCeo2TitlePreview">مدیر عامل مرکز آموزش بازرگانی</div>
                                     </div>
                                 </div>
@@ -813,7 +927,33 @@
 
     <script>
         window.certificatesData = @Html.Raw(certificatesJson);
+        let currentQRBase64 = '';
+        let currentQRInfo = '';
 
+        // ===== توابع QR Code =====
+        function showQRCodeModal(base64, fullName, certNumber) {
+            currentQRBase64 = base64;
+            currentQRInfo = `${fullName} - شماره: ${certNumber}`;
+            document.getElementById('qrModalImage').src = `data:image/png;base64,${base64}`;
+            document.getElementById('qrModalTitle').textContent = `بارکد گواهینامه ${certNumber}`;
+            document.getElementById('qrModalInfo').textContent = currentQRInfo;
+
+            var modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+            modal.show();
+        }
+
+        function downloadQRCode() {
+            if (!currentQRBase64) return;
+
+            const link = document.createElement('a');
+            link.download = `QRCode_${currentQRInfo.replace(/\s/g, '_')}.png`;
+            link.href = `data:image/png;base64,${currentQRBase64}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ===== تابع پرینت گواهینامه با امضا =====
         function printCertificate(index) {
             var data = window.certificatesData[index];
             if (!data) return;
@@ -830,23 +970,32 @@
             var todayPersian = new Date().toLocaleDateString('fa-IR', options);
             document.getElementById('pCurrentDate').textContent = todayPersian;
 
-            // TODO: بارکد - وقتی فرمول تولید بارکد مشخص شد، اینجا خروجی رو
-            // داخل کادر #pBarcode قرار بدید، مثلاً:
-            // document.getElementById('pBarcode').innerHTML = generateBarcode(data.certNumber);
+            // QR Code
+            if (data.qrCodeBase64) {
+                document.getElementById('pBarcode').innerHTML =
+                    `<img src="data:image/png;base64,${data.qrCodeBase64}"
+                          style="max-width:100%;max-height:100%;object-fit:contain;"
+                          alt="QR Code" />`;
+            } else {
+                document.getElementById('pBarcode').innerHTML = '<span style="font-size:10pt;">---</span>';
+            }
+
+            // اعمال تنظیمات امضا
+            applySignatureSettings();
 
             document.body.classList.add('is-printing-cert');
-            window.print();
+            setTimeout(() => {
+                window.print();
+            }, 100);
         }
 
         window.addEventListener('afterprint', function () {
             document.body.classList.remove('is-printing-cert');
         });
 
-        /* =====================================================================
-           پنل تنظیمات قالب چاپ - قابل تغییر توسط کاربر نهایی از داخل مرورگر
-           ===================================================================== */
+        // ===== تنظیمات قالب چاپ با امضا =====
         (function () {
-            var STORAGE_KEY = 'certTemplateSettingsV1';
+            var STORAGE_KEY = 'certTemplateSettingsV2';
 
             var BOX_DEFS = [
                 { key: 'number', label: 'شماره' },
@@ -868,22 +1017,24 @@
             ];
 
             var DEFAULT_SETTINGS = {
-                number:   { top: 15, left: 12,  width: 45,  height: 10, font: FONT_OPTIONS[0].value, size: 12 },
-                date:     { top: 27, left: 12,  width: 45,  height: 10, font: FONT_OPTIONS[0].value, size: 12 },
-                logo:     { top: 8,  left: 128, width: 40,  height: 16, font: FONT_OPTIONS[0].value, size: 12 },
-                title:    { top: 26, left: 108, width: 80,  height: 16, font: FONT_OPTIONS[0].value, size: 14 },
-                barcode:  { top: 15, left: 235, width: 45,  height: 18, font: FONT_OPTIONS[0].value, size: 10 },
-                maintext: { top: 62, left: 35,  width: 227, height: 40, font: FONT_OPTIONS[0].value, size: 15 },
-                ceo1:     { top: 120, left: 35, width: 55,  height: 22, font: FONT_OPTIONS[0].value, size: 13 },
-                ceo2:     { top: 120, left: 207, width: 55, height: 22, font: FONT_OPTIONS[0].value, size: 13 },
+                number: { top: 15, left: 12, width: 45, height: 10, font: FONT_OPTIONS[0].value, size: 12 },
+                date: { top: 27, left: 12, width: 45, height: 10, font: FONT_OPTIONS[0].value, size: 12 },
+                logo: { top: 8, left: 128, width: 40, height: 16, font: FONT_OPTIONS[0].value, size: 12 },
+                title: { top: 26, left: 108, width: 80, height: 16, font: FONT_OPTIONS[0].value, size: 14 },
+                barcode: { top: 15, left: 235, width: 45, height: 18, font: FONT_OPTIONS[0].value, size: 10 },
+                maintext: { top: 62, left: 35, width: 227, height: 40, font: FONT_OPTIONS[0].value, size: 15 },
+                ceo1: { top: 110, left: 35, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
+                ceo2: { top: 110, left: 207, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
                 texts: {
-                    certTitle: 'عنوان سر تیتر',
+                    certTitle: 'گواهینامه آموزشی',
                     ceo1Name: 'محمدرضا زهره‌وندی',
                     ceo1Title: 'رئیس هیأت‌مدیره سندیکای صنایع آسانسور',
                     ceo2Name: 'محمد وحیدی',
                     ceo2Title: 'مدیر عامل مرکز آموزش بازرگانی'
                 },
-                logoSrc: ''
+                logoSrc: '',
+                ceo1Sig: '',
+                ceo2Sig: ''
             };
 
             function cloneDefaults() {
@@ -907,6 +1058,12 @@
                         if (typeof saved.logoSrc === 'string') {
                             settings.logoSrc = saved.logoSrc;
                         }
+                        if (typeof saved.ceo1Sig === 'string') {
+                            settings.ceo1Sig = saved.ceo1Sig;
+                        }
+                        if (typeof saved.ceo2Sig === 'string') {
+                            settings.ceo2Sig = saved.ceo2Sig;
+                        }
                     }
                 } catch (e) {
                     console.error('خطا در خواندن تنظیمات ذخیره‌شده:', e);
@@ -922,6 +1079,27 @@
                 }
             }
 
+            function applySignatureSettings() {
+                var settings = loadSettings();
+                // اعمال امضاها در قالب چاپ
+                var ceo1Sig = document.getElementById('pCeo1Signature');
+                var ceo2Sig = document.getElementById('pCeo2Signature');
+
+                if (settings.ceo1Sig) {
+                    ceo1Sig.src = settings.ceo1Sig;
+                    ceo1Sig.style.display = 'block';
+                } else {
+                    ceo1Sig.style.display = 'none';
+                }
+
+                if (settings.ceo2Sig) {
+                    ceo2Sig.src = settings.ceo2Sig;
+                    ceo2Sig.style.display = 'block';
+                } else {
+                    ceo2Sig.style.display = 'none';
+                }
+            }
+
             function applySettings(settings) {
                 var root = document.documentElement.style;
                 BOX_DEFS.forEach(function (box) {
@@ -934,7 +1112,6 @@
                     root.setProperty('--' + box.key + '-box-font-size', b.size + 'pt');
                 });
 
-                // متن‌ها - هم در قالب واقعی چاپ و هم در پیش‌نمایش
                 setText('pCertTitle', settings.texts.certTitle);
                 setText('pCertTitlePreview', settings.texts.certTitle);
                 setText('pCeo1Name', settings.texts.ceo1Name);
@@ -956,6 +1133,44 @@
                         thumb.style.display = 'inline-block';
                     } else {
                         thumb.style.display = 'none';
+                    }
+                }
+
+                // امضاها - پیش‌نمایش
+                applySignaturePreview(settings);
+            }
+
+            function applySignaturePreview(settings) {
+                var ceo1SigPreview = document.getElementById('pCeo1SigPreview');
+                var ceo2SigPreview = document.getElementById('pCeo2SigPreview');
+                var ceo1Thumb = document.getElementById('ceo1SigThumb');
+                var ceo2Thumb = document.getElementById('ceo2SigThumb');
+
+                if (settings.ceo1Sig) {
+                    ceo1SigPreview.src = settings.ceo1Sig;
+                    ceo1SigPreview.style.display = 'block';
+                    if (ceo1Thumb) {
+                        ceo1Thumb.src = settings.ceo1Sig;
+                        ceo1Thumb.style.display = 'inline-block';
+                    }
+                } else {
+                    ceo1SigPreview.style.display = 'none';
+                    if (ceo1Thumb) {
+                        ceo1Thumb.style.display = 'none';
+                    }
+                }
+
+                if (settings.ceo2Sig) {
+                    ceo2SigPreview.src = settings.ceo2Sig;
+                    ceo2SigPreview.style.display = 'block';
+                    if (ceo2Thumb) {
+                        ceo2Thumb.src = settings.ceo2Sig;
+                        ceo2Thumb.style.display = 'inline-block';
+                    }
+                } else {
+                    ceo2SigPreview.style.display = 'none';
+                    if (ceo2Thumb) {
+                        ceo2Thumb.style.display = 'none';
                     }
                 }
             }
@@ -1087,6 +1302,58 @@
                 }
             }
 
+            function bindSignatureUploads() {
+                // امضای مدیرعامل چپ
+                var ceo1Input = document.getElementById('ceo1SigUpload');
+                var ceo1Remove = document.getElementById('ceo1SigRemove');
+                if (ceo1Input) {
+                    ceo1Input.addEventListener('change', function () {
+                        var file = ceo1Input.files && ceo1Input.files[0];
+                        if (!file) return;
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            currentSettings.ceo1Sig = e.target.result;
+                            applySettings(currentSettings);
+                            saveSettings(currentSettings);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+                if (ceo1Remove) {
+                    ceo1Remove.addEventListener('click', function () {
+                        currentSettings.ceo1Sig = '';
+                        if (ceo1Input) ceo1Input.value = '';
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                    });
+                }
+
+                // امضای مدیرعامل راست
+                var ceo2Input = document.getElementById('ceo2SigUpload');
+                var ceo2Remove = document.getElementById('ceo2SigRemove');
+                if (ceo2Input) {
+                    ceo2Input.addEventListener('change', function () {
+                        var file = ceo2Input.files && ceo2Input.files[0];
+                        if (!file) return;
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            currentSettings.ceo2Sig = e.target.result;
+                            applySettings(currentSettings);
+                            saveSettings(currentSettings);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+                if (ceo2Remove) {
+                    ceo2Remove.addEventListener('click', function () {
+                        currentSettings.ceo2Sig = '';
+                        if (ceo2Input) ceo2Input.value = '';
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                    });
+                }
+            }
+
             function bindResetButton() {
                 var btn = document.getElementById('certSettingsResetBtn');
                 if (btn) {
@@ -1098,6 +1365,10 @@
                         populateTextInputs(currentSettings);
                         var logoInput = document.getElementById('logoUploadInput');
                         if (logoInput) logoInput.value = '';
+                        var ceo1Input = document.getElementById('ceo1SigUpload');
+                        if (ceo1Input) ceo1Input.value = '';
+                        var ceo2Input = document.getElementById('ceo2SigUpload');
+                        if (ceo2Input) ceo2Input.value = '';
                     });
                 }
             }
@@ -1110,6 +1381,7 @@
                 populateTextInputs(currentSettings);
                 bindTextInputs();
                 bindLogoUpload();
+                bindSignatureUploads();
                 bindResetButton();
 
                 var modalEl = document.getElementById('certSettingsModal');
@@ -1117,11 +1389,13 @@
                     modalEl.addEventListener('shown.bs.modal', function () {
                         buildAccordionForm(currentSettings);
                         populateTextInputs(currentSettings);
+                        applySignaturePreview(currentSettings);
                     });
                 }
             });
         })();
 
+        // ===== کدهای آماده‌سازی صفحه =====
         $(document).ready(function () {
             $('#NationalCode').on('input', function () {
                 let value = this.value;

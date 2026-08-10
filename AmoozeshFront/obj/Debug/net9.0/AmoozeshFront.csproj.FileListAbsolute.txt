@@ -98,3 +98,11 @@ C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\ref\Am
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\dotnet-tools.json
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\AmoozeshFront.sourcelink.json
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\AmoozeshFront.csproj.AssemblyReference.cache
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\QRCoder.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\System.Drawing.Common.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Debug\net9.0\Amoozesh.EFF5EF9E.Up2Date

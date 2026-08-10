@@ -1,36 +1,32 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Models/Certificate/CertificateDto.cs
+using System.ComponentModel.DataAnnotations;
 using AmoozeshFront.Core.Enums;
 
 namespace AmoozeshFront.Models.Certificate
 {
-    // معادل CertificateDto سمت بک‌اند (کاملاً هماهنگ با کنترلر و ویو)
     public class CertificateDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; } // تغییر به long برای هماهنگی با بک‌اند
 
-        // تغییر نام برای هماهنگی با CertificateNo در کنترلر
         public string CertificateNumber { get; set; }
-
         public bool Gender { get; set; }
         public string FullName { get; set; }
         public string FatherName { get; set; }
         public string NationalCode { get; set; }
         public string CompanyName { get; set; }
-
         public string ExamTitle { get; set; }
-
         public DateTime? ExamDate { get; set; }
-        public int? DurationHours { get; set; } // اگر در بک‌اند وجود دارد
-
+        public int? DurationHours { get; set; }
         public CertificateStatus Status { get; set; }
         public string StatusDisplay { get; set; }
         public string Barcode { get; set; }
         public DateTime? CreatedAt { get; set; }
-
         public string GenderDisplay => Gender ? "زن" : "مرد";
+
+        // اضافه کردن QR Code
+        public string QRCodeBase64 { get; set; }
     }
 
-    // مدل صفحه‌ی جستجو (فرم + نتایج) - بدون تغییر و عالی
     public class CertificateSearchViewModel
     {
         [Required(ErrorMessage = "کد ملی الزامی است")]
@@ -39,16 +35,35 @@ namespace AmoozeshFront.Models.Certificate
         public string NationalCode { get; set; }
 
         public List<CertificateDto> Results { get; set; } = new();
-
         public bool HasSearched { get; set; } = false;
     }
 
-    // رَپر عمومی پاسخ‌های API - کاملاً درست و استاندارد
     public class ApiListResponse<T>
     {
         public bool Success { get; set; }
         public List<T> Data { get; set; } = new();
         public int Count { get; set; }
         public string Message { get; set; }
+    }
+
+    public class ApiResponse<T>
+    {
+        public bool Success { get; set; }
+        public T Data { get; set; }
+        public string Message { get; set; }
+    }
+
+    public class CertificateData
+    {
+        public long Id { get; set; }
+        public string CertificateNumber { get; set; }
+        public string FullName { get; set; }
+        public string NationalCode { get; set; }
+        public string ExamTitle { get; set; }
+        public DateTime? ExamDate { get; set; }
+        public string CompanyName { get; set; }
+        public string FatherName { get; set; }
+        public bool Gender { get; set; }
+        public string Status { get; set; }
     }
 }

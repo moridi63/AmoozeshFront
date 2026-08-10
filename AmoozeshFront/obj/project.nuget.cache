@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "/kHQ0bk4X4I=",
+  "dgSpecHash": "68jvERtKNGs=",
   "success": true,
   "projectFilePath": "C:\\Users\\moridi\\source\\repos\\AmoozeshFront\\AmoozeshFront\\AmoozeshFront.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\moridi\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
+    "C:\\Users\\moridi\\.nuget\\packages\\qrcoder\\1.8.0\\qrcoder.1.8.0.nupkg.sha512",
+    "C:\\Users\\moridi\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512"
+  ],
   "logs": []
 }

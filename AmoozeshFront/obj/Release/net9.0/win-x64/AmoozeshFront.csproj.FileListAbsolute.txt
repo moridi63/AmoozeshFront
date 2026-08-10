@@ -423,3 +423,8 @@ C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\AmoozeshFront.pdb
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\AmoozeshFront.genruntimeconfig.cache
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\ref\AmoozeshFront.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\AmoozeshFront.sourcelink.json
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\win-x64\Microsoft.Win32.SystemEvents.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\win-x64\QRCoder.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\win-x64\System.Drawing.Common.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\AmoozeshFront.csproj.AssemblyReference.cache

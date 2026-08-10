@@ -331,3 +331,6 @@ C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\PubTmp\Out\mscorrc.dll
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\PubTmp\Out\msquic.dll
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\PubTmp\Out\aspnetcorev2_inprocess.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\PubTmp\Out\Microsoft.Win32.SystemEvents.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\PubTmp\Out\QRCoder.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\win-x64\PubTmp\Out\System.Drawing.Common.dll

@@ -97,3 +97,12 @@ C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\refi
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\AmoozeshFront.pdb
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\AmoozeshFront.genruntimeconfig.cache
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\ref\AmoozeshFront.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\AmoozeshFront.sourcelink.json
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\QRCoder.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\System.Drawing.Common.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\bin\Release\net9.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\AmoozeshFront.csproj.AssemblyReference.cache
+C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\obj\Release\net9.0\Amoozesh.EFF5EF9E.Up2Date

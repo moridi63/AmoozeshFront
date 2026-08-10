@@ -12,6 +12,7 @@ builder.Logging.AddDebug();
 
 // اضافه کردن Services
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IQRCodeService, QRCodeService>();
 
 // ۱. ماندگاری کلیدهای رمزنگاری برای جلوگیری از پریدن سشن کاربر پس از ریستارت سرور
 var keysFolder = Path.Combine(builder.Environment.ContentRootPath, "temp-keys");
