@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AmoozeshFront")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e8e6b596e048f3635c08f9e1eb83a974fd7bb8c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+db6f7ec850b9cd8b6e820ff0ed5e1eeb2e8d27ea")]
 [assembly: System.Reflection.AssemblyProductAttribute("AmoozeshFront")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AmoozeshFront")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -12,14 +12,15 @@
             certificatesForPrint.Add(new
             {
                 id = c.Id,
-                fullName = c.FullName,
-                fatherName = c.FatherName,
-                nationalCode = Model!.NationalCode,
-                companyName = c.CompanyName,
-                examTitle = c.ExamTitle,
-                examDate = c.ExamDate.HasValue ? c.ExamDate.Value.ToString("yyyy/MM/dd") : "",
-                certNumber = c.CertificateNumber,
-                qrCodeBase64 = c.QRCodeBase64
+                fullName = c.FullName ?? "",
+                fatherName = c.FatherName ?? "",
+                nationalCode = Model?.NationalCode ?? "",
+                companyName = c.CompanyName ?? "",
+                examTitle = c.ExamTitle ?? "",
+                examDate = c.ExamDate.HasValue ? c.ExamDate.Value.ToString("yyyy/MM/dd") : (c.ExamDatePersian ?? ""),
+                certNumber = c.CertificateNumber ?? "",
+                qrCodeBase64 = c.QRCodeBase64 ?? "",
+                gender = c.Gender
             });
         }
     }
@@ -57,12 +58,18 @@
             --date-box-height: 10mm;
             --date-box-font-family: var(--cert-font-default);
             --date-box-font-size: 12pt;
-            --logo-box-top: 8mm;
-            --logo-box-left: 128mm;
-            --logo-box-width: 40mm;
-            --logo-box-height: 16mm;
-            --logo-box-font-family: var(--cert-font-default);
-            --logo-box-font-size: 12pt;
+            --logo1-box-top: 8mm;
+            --logo1-box-left: 128mm;
+            --logo1-box-width: 40mm;
+            --logo1-box-height: 16mm;
+            --logo1-box-font-family: var(--cert-font-default);
+            --logo1-box-font-size: 12pt;
+            --logo2-box-top: 8mm;
+            --logo2-box-left: 10mm;
+            --logo2-box-width: 40mm;
+            --logo2-box-height: 16mm;
+            --logo2-box-font-family: var(--cert-font-default);
+            --logo2-box-font-size: 12pt;
             --title-box-top: 26mm;
             --title-box-left: 108mm;
             --title-box-width: 80mm;
@@ -93,6 +100,18 @@
             --ceo2-box-height: 28mm;
             --ceo2-box-font-family: var(--cert-font-default);
             --ceo2-box-font-size: 13pt;
+            --notice1-box-top: 103mm;
+            --notice1-box-left: 20mm;
+            --notice1-box-width: 257mm;
+            --notice1-box-height: 9mm;
+            --notice1-box-font-family: var(--cert-font-default);
+            --notice1-box-font-size: 11pt;
+            --notice2-box-top: 196mm;
+            --notice2-box-left: 20mm;
+            --notice2-box-width: 257mm;
+            --notice2-box-height: 9mm;
+            --notice2-box-font-family: var(--cert-font-default);
+            --notice2-box-font-size: 10pt;
         }
 
         body {
@@ -231,7 +250,6 @@
                 border-color: var(--accent-gold);
             }
 
-        /* ===== استایل‌های QR Code ===== */
         .qr-code-small {
             width: 65px;
             height: 65px;
@@ -280,17 +298,6 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
         }
 
-        /* ===== استایل‌های امضا ===== */
-        .signature-preview {
-            max-width: 100px;
-            max-height: 40px;
-            object-fit: contain;
-            border: 1px dashed #dee2e6;
-            border-radius: 6px;
-            padding: 4px;
-            background: white;
-        }
-
         .signature-thumb {
             width: 80px;
             height: 30px;
@@ -308,12 +315,6 @@
             gap: 4px;
         }
 
-            .signature-container .btn-sm {
-                font-size: 0.7rem;
-                padding: 2px 8px;
-            }
-
-        /* ===== تنظیمات چاپ ===== */
         #printCertificateTemplate {
             display: none;
         }
@@ -349,9 +350,9 @@
             font-family: var(--cert-font-default);
             overflow: hidden;
             position: relative;
-            page-break-inside: avoid;
-            page-break-after: avoid;
             background: #fff;
+            page-break-after: always;
+            break-after: page;
         }
 
         .cert-box {
@@ -377,6 +378,12 @@
             font-size: var(--number-box-font-size);
         }
 
+            .cert-box-number span {
+                font-family: inherit;
+                font-size: inherit;
+                font-weight: bold;
+            }
+
         .cert-box-date {
             top: var(--date-box-top);
             left: var(--date-box-left);
@@ -386,19 +393,54 @@
             font-size: var(--date-box-font-size);
         }
 
-        .cert-box-logo {
-            top: var(--logo-box-top);
-            left: var(--logo-box-left);
-            width: var(--logo-box-width);
-            height: var(--logo-box-height);
-            font-family: var(--logo-box-font-family);
-            font-size: var(--logo-box-font-size);
+            .cert-box-date span {
+                font-family: inherit;
+                font-size: inherit;
+                font-weight: bold;
+            }
+
+        .cert-box-logo1 {
+            top: var(--logo1-box-top);
+            left: var(--logo1-box-left);
+            width: var(--logo1-box-width);
+            height: var(--logo1-box-height);
+            font-family: var(--logo1-box-font-family);
+            font-size: var(--logo1-box-font-size);
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-            .cert-box-logo img {
+            .cert-box-logo1 img {
                 max-width: 100%;
                 max-height: 100%;
                 object-fit: contain;
+                mix-blend-mode: multiply;
+                opacity: 0.95;
+            }
+
+        .cert-box-logo2 {
+            top: var(--logo2-box-top);
+            left: var(--logo2-box-left);
+            width: var(--logo2-box-width);
+            height: var(--logo2-box-height);
+            font-family: var(--logo2-box-font-family);
+            font-size: var(--logo2-box-font-size);
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+            .cert-box-logo2 img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                mix-blend-mode: multiply;
+                opacity: 0.95;
             }
 
         .cert-box-title {
@@ -453,9 +495,28 @@
             height: var(--ceo1-box-height);
             font-family: var(--ceo1-box-font-family);
             font-size: var(--ceo1-box-font-size);
+            display: flex;
             flex-direction: column;
-            gap: 1mm;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
         }
+
+            .cert-box-ceo1 > div {
+                position: relative;
+                z-index: 2;
+                font-size: inherit;
+                font-family: inherit;
+                font-weight: bold;
+            }
+
+            .cert-box-ceo1 .cert-sig-title {
+                font-size: inherit;
+                font-weight: bold;
+                color: #000;
+                position: relative;
+                z-index: 2;
+            }
 
         .cert-box-ceo2 {
             top: var(--ceo2-box-top);
@@ -464,23 +525,73 @@
             height: var(--ceo2-box-height);
             font-family: var(--ceo2-box-font-family);
             font-size: var(--ceo2-box-font-size);
+            display: flex;
             flex-direction: column;
-            gap: 1mm;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+        }
+
+            .cert-box-ceo2 > div {
+                position: relative;
+                z-index: 2;
+                font-size: inherit;
+                font-family: inherit;
+                font-weight: bold;
+            }
+
+            .cert-box-ceo2 .cert-sig-title {
+                font-size: inherit;
+                font-weight: bold;
+                color: #000;
+                position: relative;
+                z-index: 2;
+            }
+
+        .cert-signature-img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 60mm;
+            max-height: 25mm;
+            object-fit: contain;
+            z-index: 1;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            opacity: 0.95;
+        }
+
+        .cert-box-notice1 {
+            top: var(--notice1-box-top);
+            left: var(--notice1-box-left);
+            width: var(--notice1-box-width);
+            height: var(--notice1-box-height);
+            font-family: var(--notice1-box-font-family);
+            font-size: var(--notice1-box-font-size);
+            font-weight: normal;
+            line-height: 1.6;
+        }
+
+        .cert-box-notice2 {
+            top: var(--notice2-box-top);
+            left: var(--notice2-box-left);
+            width: var(--notice2-box-width);
+            height: var(--notice2-box-height);
+            font-family: var(--notice2-box-font-family);
+            font-size: var(--notice2-box-font-size);
+            font-weight: normal;
+            line-height: 1.6;
         }
 
         .cert-sig-title {
-            font-size: 0.7em;
-            font-weight: normal;
-            color: #333;
+            font-size: inherit;
+            font-weight: bold;
+            color: #000;
+            position: relative;
+            z-index: 2;
         }
 
-        .cert-signature-img {
-            max-width: 60mm;
-            max-height: 12mm;
-            object-fit: contain;
-        }
-
-        /* ===== تنظیمات قالب چاپ ===== */
         .btn-settings-cert {
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.4);
@@ -551,6 +662,11 @@
             .cert-page {
                 box-shadow: none;
             }
+
+                .cert-page:last-child {
+                    page-break-after: avoid !important;
+                    break-after: avoid !important;
+                }
         }
     </style>
 </head>
@@ -563,9 +679,14 @@
             <div class="col-md-7 text-center">
                 <h2 class="fw-bold mb-3 gradient-text">سامانه هوشمند استعلام گواهینامه‌ها</h2>
                 <p class="text-muted-custom fs-6">جهت مشاهده گواهینامه‌های آموزشی خود، کد ملی ده رقمی را وارد نمایید.</p>
-                <button type="button" class="btn btn-settings-cert mt-2" data-bs-toggle="modal" data-bs-target="#certSettingsModal">
-                    <i class="bi bi-gear"></i> تنظیمات قالب چاپ گواهینامه
-                </button>
+                <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
+                    <button type="button" class="btn btn-settings-cert" data-bs-toggle="modal" data-bs-target="#certSettingsModal">
+                        <i class="bi bi-gear"></i> تنظیمات قالب چاپ گواهینامه
+                    </button>
+                    <button type="button" class="btn btn-settings-cert" id="btnPrintAllDb">
+                        <i class="bi bi-printer-fill"></i> چاپ تمام گواهینامه‌های سیستم
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -608,9 +729,15 @@
                 <div class="col-md-10">
                     @if (Model.Results != null && Model.Results.Any())
                     {
-                        <h4 class="mb-4 text-light fw-bold d-flex align-items-center gap-2">
-                            <span class="badge badge-gold">@Model.Results.Count</span>
-                            <span>گواهینامه‌های یافت شده</span>
+                        <h4 class="mb-4 text-light fw-bold d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge badge-gold">@Model.Results.Count</span>
+                                <span>گواهینامه‌های یافت شده</span>
+                            </div>
+                            <button type="button" class="btn btn-gold btn-sm d-flex align-items-center gap-2" onclick="printAllCertificates()">
+                                <i class="bi bi-printer-fill"></i>
+                                <span>چاپ همه گواهینامه‌ها</span>
+                            </button>
                         </h4>
 
                         <div class="row g-4">
@@ -619,6 +746,7 @@
                             }
                             @foreach (var cert in Model.Results)
                             {
+                                var genderTitle = cert.Gender ? "جناب آقای" : "سرکار خانم";
                                 <div class="col-md-6">
                                     <div class="card certificate-card h-100 p-4">
                                         <div class="d-flex justify-content-between align-items-start mb-2">
@@ -652,6 +780,10 @@
                                                     <span class="text-muted-custom">کد ملی:</span>
                                                     <span class="info-value ms-1">@Model.NationalCode</span>
                                                 </div>
+                                                <div class="mb-2">
+                                                    <span class="text-muted-custom">جنسیت:</span>
+                                                    <span class="info-value ms-1">@genderTitle</span>
+                                                </div>
                                             </div>
 
                                             <div class="col-sm-6">
@@ -662,7 +794,7 @@
                                                 <div class="mb-2">
                                                     <span class="text-muted-custom">تاریخ آزمون:</span>
                                                     <span class="info-value ms-1">
-                                                        @(cert.ExamDate.HasValue? cert.ExamDate.Value.ToString("yyyy/MM/dd") : "ثبت نشده")
+                                                        @(cert.ExamDate.HasValue? cert.ExamDate.Value.ToString("yyyy/MM/dd") : (!string.IsNullOrEmpty(cert.ExamDatePersian) ? cert.ExamDatePersian : "ثبت نشده"))
                                                     </span>
                                                 </div>
                                                 <div class="mb-2">
@@ -718,7 +850,7 @@
         }
     </div>
 
-    <!-- ===== Modal نمایش QR Code بزرگ ===== -->
+    <!-- Modal QR Code -->
     <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content modal-content-dark">
@@ -751,49 +883,10 @@
         </div>
     </div>
 
-    <!-- ===== قالب پرینت با امضا ===== -->
-    <div id="printCertificateTemplate">
-        <div class="cert-page">
-            <div class="cert-box cert-box-number">شماره: <span id="pCertNumber"></span></div>
-            <div class="cert-box cert-box-date">تاریخ: <span id="pCurrentDate"></span></div>
-            <div class="cert-box cert-box-logo">
-                <img id="pLogo" src="" alt="لوگو" />
-            </div>
-            <div class="cert-box cert-box-title">
-                <span id="pCertTitle">گواهینامه آموزشی</span>
-            </div>
-            <div class="cert-box cert-box-barcode" id="pBarcode"></div>
-            <div class="cert-box cert-box-maintext">
-                <p style="margin:0;">
-                    بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم
-                    <span id="pFullName" class="cert-fill"></span>
-                    فرزند
-                    <span id="pFatherName" class="cert-fill"></span>
-                    به شماره ملی
-                    <span id="pNationalCode" class="cert-fill"></span>
-                    از سوی شرکت
-                    <span id="pCompanyName" class="cert-fill"></span>
-                    در آزمون
-                    <span id="pExamTitle" class="cert-fill"></span>
-                    مورخ
-                    <span id="pExamDate" class="cert-fill"></span>
-                    شرکت نموده و حائز نمره قبول گردیده است.
-                </p>
-            </div>
-            <div class="cert-box cert-box-ceo1">
-                <div id="pCeo1Name">محمدرضا زهره‌وندی</div>
-                <img id="pCeo1Signature" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
-                <div class="cert-sig-title" id="pCeo1Title">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
-            </div>
-            <div class="cert-box cert-box-ceo2">
-                <div id="pCeo2Name">محمد وحیدی</div>
-                <img id="pCeo2Signature" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
-                <div class="cert-sig-title" id="pCeo2Title">مدیر عامل مرکز آموزش بازرگانی</div>
-            </div>
-        </div>
-    </div>
+    <!-- قالب پرینت -->
+    <div id="printCertificateTemplate"></div>
 
-    <!-- ===== مودال تنظیمات قالب چاپ با امضا ===== -->
+    <!-- مودال تنظیمات قالب چاپ -->
     <div class="modal fade" id="certSettingsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content" data-bs-theme="light">
@@ -805,22 +898,30 @@
                     <div class="row g-4">
                         <div class="col-lg-7">
                             <p class="text-muted small mb-3">
-                                مقادیر هر کادر با پیش‌فرض پر شده‌اند. هرچه رو بخواید تغییر بدید، بلافاصله در پیش‌نمایش کنار صفحه دیده می‌شه و به‌صورت خودکار ذخیره می‌شه.
+                                مقادیر هر کادر با پیش‌فرض پر شده‌اند. تغییرات بلافاصله در پیش‌نمایش اعمال شده و به‌صورت خودکار ذخیره می‌شوند.
                             </p>
 
                             <div class="cert-box-field-group">
-                                <h6><i class="bi bi-image"></i> لوگو</h6>
-                                <div class="row g-2 align-items-center">
-                                    <div class="col-auto">
-                                        <img id="logoThumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:none;background:#fff;">
+                                <h6><i class="bi bi-image"></i> لوگوها</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="fw-bold">لوگو ۱ (سمت راست)</label>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img id="logo1Thumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:none;background:#fff;">
+                                            <input type="file" id="logo1UploadInput" class="form-control form-control-sm" accept="image/*">
+                                            <button type="button" id="logo1RemoveBtn" class="btn btn-sm btn-outline-danger">حذف</button>
+                                        </div>
                                     </div>
-                                    <div class="col">
-                                        <input type="file" id="logoUploadInput" class="form-control form-control-sm" accept="image/*">
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="button" id="logoRemoveBtn" class="btn btn-sm btn-outline-danger">حذف لوگو</button>
+                                    <div class="col-md-6">
+                                        <label class="fw-bold">لوگو ۲ (سمت چپ)</label>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img id="logo2Thumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:none;background:#fff;">
+                                            <input type="file" id="logo2UploadInput" class="form-control form-control-sm" accept="image/*">
+                                            <button type="button" id="logo2RemoveBtn" class="btn btn-sm btn-outline-danger">حذف</button>
+                                        </div>
                                     </div>
                                 </div>
+                                <small class="text-muted mt-2 d-block">لوگوها با حالت <code>mix-blend-mode: multiply</code> و شفافیت کم در پشت متن نمایش داده می‌شوند.</small>
                             </div>
 
                             <div class="cert-box-field-group">
@@ -849,7 +950,20 @@
                                 </div>
                             </div>
 
-                            <!-- بخش آپلود امضا -->
+                            <div class="cert-box-field-group">
+                                <h6><i class="bi bi-exclamation-circle"></i> متن‌های توضیحی (خطوط قانونی)</h6>
+                                <div class="row g-2">
+                                    <div class="col-md-12">
+                                        <label>خط اول (محدودیت اعتبار به شرکت)</label>
+                                        <textarea class="form-control form-control-sm" id="text-notice1" rows="2"></textarea>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>خط دوم (مدت اعتبار و آزمون عملی)</label>
+                                        <textarea class="form-control form-control-sm" id="text-notice2" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="cert-box-field-group">
                                 <h6><i class="bi bi-pen"></i> امضاها</h6>
                                 <div class="row g-3">
@@ -870,7 +984,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <small class="text-muted">تصویر امضا با فرمت PNG با پس‌زمینه شفاف توصیه می‌شود.</small>
+                                <small class="text-muted">تصویر امضا به‌صورت خودکار در پشت متن قرار می‌گیرد.</small>
                             </div>
 
                             <div id="certBoxAccordion"></div>
@@ -882,7 +996,8 @@
                                 <div class="cert-page cert-page-preview">
                                     <div class="cert-box cert-box-number">شماره: <span>۱۲۳۴۵</span></div>
                                     <div class="cert-box cert-box-date">تاریخ: <span>۱۴۰۵/۰۵/۰۱</span></div>
-                                    <div class="cert-box cert-box-logo"><img id="pLogoPreview" src="" alt="لوگو"></div>
+                                    <div class="cert-box cert-box-logo1"><img id="pLogo1Preview" src="" alt="لوگو ۱"></div>
+                                    <div class="cert-box cert-box-logo2"><img id="pLogo2Preview" src="" alt="لوگو ۲"></div>
                                     <div class="cert-box cert-box-title"><span id="pCertTitlePreview">گواهینامه آموزشی</span></div>
                                     <div class="cert-box cert-box-barcode">بارکد نمونه</div>
                                     <div class="cert-box cert-box-maintext">
@@ -896,14 +1011,20 @@
                                             شرکت نموده و حائز نمره قبول گردیده است.
                                         </p>
                                     </div>
+                                    <div class="cert-box cert-box-notice1">
+                                        <span id="pNotice1Preview">این گواهینامه به منزله قبولی در آزمون و فعالیت در شرکت مذکور صادر گردیده و فاقد اعتبار جهت فعالیت در سایر شرکت‌ها می‌باشد.</span>
+                                    </div>
+                                    <div class="cert-box cert-box-notice2">
+                                        <span id="pNotice2Preview">اعتبار این گواهینامه ۶ ماه از تاریخ آزمون بوده و قبولی نهایی منوط به پذیرفته شدن در آزمون عملی اتحادیه کشوری می‌باشد.</span>
+                                    </div>
                                     <div class="cert-box cert-box-ceo1">
-                                        <div id="pCeo1NamePreview">محمدرضا زهره‌وندی</div>
                                         <img id="pCeo1SigPreview" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
+                                        <div id="pCeo1NamePreview">محمدرضا زهره‌وندی</div>
                                         <div class="cert-sig-title" id="pCeo1TitlePreview">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
                                     </div>
                                     <div class="cert-box cert-box-ceo2">
-                                        <div id="pCeo2NamePreview">محمد وحیدی</div>
                                         <img id="pCeo2SigPreview" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
+                                        <div id="pCeo2NamePreview">محمد وحیدی</div>
                                         <div class="cert-sig-title" id="pCeo2TitlePreview">مدیر عامل مرکز آموزش بازرگانی</div>
                                     </div>
                                 </div>
@@ -922,15 +1043,46 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 
     <script>
         window.certificatesData = @Html.Raw(certificatesJson);
         let currentQRBase64 = '';
         let currentQRInfo = '';
 
-        // ===== توابع QR Code =====
+        // تابع تبدیل اعداد انگلیسی به فارسی
+        function toPersianNumber(num) {
+            if (num === undefined || num === null) return '';
+            var persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+            return String(num).replace(/\d/g, function (m) {
+                return persianDigits[parseInt(m)];
+            });
+        }
+
+        // تابع تبدیل تاریخ میلادی به شمسی
+        function toPersianDate(dateStr) {
+            if (!dateStr) return '';
+            try {
+                // اگر تاریخ به صورت "yyyy/MM/dd" است
+                var parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    var year = parseInt(parts[0]);
+                    var month = parseInt(parts[1]);
+                    var day = parseInt(parts[2]);
+                    var date = new Date(year, month - 1, day);
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleDateString('fa-IR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        }).replace(/\//g, '/');
+                    }
+                }
+                return dateStr;
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
         function showQRCodeModal(base64, fullName, certNumber) {
             currentQRBase64 = base64;
             currentQRInfo = `${fullName} - شماره: ${certNumber}`;
@@ -944,7 +1096,6 @@
 
         function downloadQRCode() {
             if (!currentQRBase64) return;
-
             const link = document.createElement('a');
             link.download = `QRCode_${currentQRInfo.replace(/\s/g, '_')}.png`;
             link.href = `data:image/png;base64,${currentQRBase64}`;
@@ -953,449 +1104,692 @@
             document.body.removeChild(link);
         }
 
-        // ===== تابع پرینت گواهینامه با امضا =====
+        function renderSingleCertHtml(data, settings) {
+            var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            var todayPersian = new Date().toLocaleDateString('fa-IR', options);
+
+            var genderTitle = data.gender === true ? 'جناب آقای' : 'سرکار خانم';
+
+            var qrHtml = data.qrCodeBase64
+                ? `<img src="data:image/png;base64,${data.qrCodeBase64}" style="max-width:100%;max-height:100%;object-fit:contain;" alt="QR Code" />`
+                : '<span style="font-size:10pt;">---</span>';
+
+            var logo1Html = settings.logo1Src
+                ? `<img src="${settings.logo1Src}" alt="لوگو ۱" style="mix-blend-mode:multiply;opacity:0.95;" />`
+                : '';
+
+            var logo2Html = settings.logo2Src
+                ? `<img src="${settings.logo2Src}" alt="لوگو ۲" style="mix-blend-mode:multiply;opacity:0.95;" />`
+                : '';
+
+            var ceo1SigStyle = settings.ceo1Sig ? `src="${settings.ceo1Sig}" style="display:block;"` : 'src="" style="display:none;"';
+            var ceo2SigStyle = settings.ceo2Sig ? `src="${settings.ceo2Sig}" style="display:block;"` : 'src="" style="display:none;"';
+
+            // تبدیل شماره گواهینامه به فارسی
+            var certNumberPersian = toPersianNumber(data.certNumber);
+
+            // تبدیل تاریخ آزمون به شمسی
+            var examDatePersian = toPersianDate(data.examDate);
+
+            return `
+                <div class="cert-page">
+                    <div class="cert-box cert-box-number">شماره: <span>${certNumberPersian || '---'}</span></div>
+                    <div class="cert-box cert-box-date">تاریخ: <span>${todayPersian}</span></div>
+                    <div class="cert-box cert-box-logo1">${logo1Html}</div>
+                    <div class="cert-box cert-box-logo2">${logo2Html}</div>
+                    <div class="cert-box cert-box-title">
+                        <span>${settings.texts.certTitle || 'گواهینامه آموزشی'}</span>
+                    </div>
+                    <div class="cert-box cert-box-barcode">${qrHtml}</div>
+                    <div class="cert-box cert-box-maintext">
+                        <p style="margin:0;">
+                            بدین وسیله گواهی می‌شود
+                            <span style="font-weight:bold;">${genderTitle}</span>
+                            <span class="cert-fill">${data.fullName || ''}</span>
+                            فرزند
+                            <span class="cert-fill">${data.fatherName || ''}</span>
+                            به شماره ملی
+                            <span class="cert-fill">${data.nationalCode || ''}</span>
+                            از سوی شرکت
+                            <span class="cert-fill">${data.companyName || ''}</span>
+                            در آزمون
+                            <span class="cert-fill">${data.examTitle || ''}</span>
+                            مورخ
+                            <span class="cert-fill">${examDatePersian || ''}</span>
+                            شرکت نموده و حائز نمره قبول گردیده است.
+                        </p>
+                    </div>
+                    <div class="cert-box cert-box-notice1">
+                        <span>${settings.texts.notice1 || ''}</span>
+                    </div>
+                    <div class="cert-box cert-box-notice2">
+                        <span>${settings.texts.notice2 || ''}</span>
+                    </div>
+                    <div class="cert-box cert-box-ceo1">
+                        <img class="cert-signature-img" ${ceo1SigStyle} alt="امضا" />
+                        <div>${settings.texts.ceo1Name || ''}</div>
+                        <div class="cert-sig-title">${settings.texts.ceo1Title || ''}</div>
+                    </div>
+                    <div class="cert-box cert-box-ceo2">
+                        <img class="cert-signature-img" ${ceo2SigStyle} alt="امضا" />
+                        <div>${settings.texts.ceo2Name || ''}</div>
+                        <div class="cert-sig-title">${settings.texts.ceo2Title || ''}</div>
+                    </div>
+                </div>
+            `;
+        }
+
         function printCertificate(index) {
             var data = window.certificatesData[index];
             if (!data) return;
 
-            document.getElementById('pFullName').textContent = data.fullName || '';
-            document.getElementById('pFatherName').textContent = data.fatherName || '';
-            document.getElementById('pNationalCode').textContent = data.nationalCode || '';
-            document.getElementById('pCompanyName').textContent = data.companyName || '';
-            document.getElementById('pExamTitle').textContent = data.examTitle || '';
-            document.getElementById('pExamDate').textContent = data.examDate || '';
-            document.getElementById('pCertNumber').textContent = data.certNumber || '---';
-
-            var options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            var todayPersian = new Date().toLocaleDateString('fa-IR', options);
-            document.getElementById('pCurrentDate').textContent = todayPersian;
-
-            // QR Code
-            if (data.qrCodeBase64) {
-                document.getElementById('pBarcode').innerHTML =
-                    `<img src="data:image/png;base64,${data.qrCodeBase64}"
-                          style="max-width:100%;max-height:100%;object-fit:contain;"
-                          alt="QR Code" />`;
-            } else {
-                document.getElementById('pBarcode').innerHTML = '<span style="font-size:10pt;">---</span>';
-            }
-
-            // اعمال تنظیمات امضا
-            applySignatureSettings();
+            var settings = loadSettings();
+            var template = document.getElementById('printCertificateTemplate');
+            template.innerHTML = renderSingleCertHtml(data, settings);
 
             document.body.classList.add('is-printing-cert');
             setTimeout(() => {
                 window.print();
-            }, 100);
+            }, 150);
+        }
+
+        function printAllCertificates(dataList) {
+            var list = dataList || window.certificatesData;
+
+            if (!list || list.length === 0) {
+                alert('هیچ گواهینامه‌ای برای چاپ وجود ندارد.');
+                return;
+            }
+
+            var settings = loadSettings();
+            var htmlContent = '';
+
+            list.forEach(function (data) {
+                htmlContent += renderSingleCertHtml(data, settings);
+            });
+
+            var template = document.getElementById('printCertificateTemplate');
+            template.innerHTML = htmlContent;
+
+            document.body.classList.add('is-printing-cert');
+            setTimeout(() => {
+                window.print();
+            }, 200);
+        }
+
+        function printAllFromDatabase() {
+            var btn = document.getElementById('btnPrintAllDb');
+            var originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split"></i> در حال دریافت اطلاعات...';
+
+            fetch('/Certificates/GetAllForPrint', {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (result) {
+                    if (!result.success) {
+                        alert(result.message || 'خطا در دریافت اطلاعات گواهینامه‌ها.');
+                        return;
+                    }
+                    if (!result.data || result.data.length === 0) {
+                        alert('هیچ گواهینامه‌ای در سیستم ثبت نشده است.');
+                        return;
+                    }
+                    printAllCertificates(result.data);
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    alert('خطا در برقراری ارتباط با سرور.');
+                })
+                .finally(function () {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                });
         }
 
         window.addEventListener('afterprint', function () {
             document.body.classList.remove('is-printing-cert');
         });
 
-        // ===== تنظیمات قالب چاپ با امضا =====
-        (function () {
-            var STORAGE_KEY = 'certTemplateSettingsV2';
+        var STORAGE_KEY = 'certTemplateSettingsV3';
 
-            var BOX_DEFS = [
-                { key: 'number', label: 'شماره' },
-                { key: 'date', label: 'تاریخ' },
-                { key: 'logo', label: 'لوگو' },
-                { key: 'title', label: 'عنوان سر تیتر' },
-                { key: 'barcode', label: 'بارکد' },
-                { key: 'maintext', label: 'متن اصلی' },
-                { key: 'ceo1', label: 'مدیرعامل (چپ)' },
-                { key: 'ceo2', label: 'مدیرعامل دوم (راست)' }
-            ];
+        var BOX_DEFS = [
+            { key: 'number', label: 'شماره' },
+            { key: 'date', label: 'تاریخ' },
+            { key: 'logo1', label: 'لوگو ۱ (راست)' },
+            { key: 'logo2', label: 'لوگو ۲ (چپ)' },
+            { key: 'title', label: 'عنوان سر تیتر' },
+            { key: 'barcode', label: 'بارکد' },
+            { key: 'maintext', label: 'متن اصلی' },
+            { key: 'ceo1', label: 'مدیرعامل (چپ)' },
+            { key: 'ceo2', label: 'مدیرعامل دوم (راست)' },
+            { key: 'notice1', label: 'توضیح خط اول (محدودیت شرکت)' },
+            { key: 'notice2', label: 'توضیح خط دوم (اعتبار و آزمون عملی)' }
+        ];
 
-            var FONT_OPTIONS = [
-                { value: "'B Nazanin', Tahoma, Arial, sans-serif", label: 'B Nazanin' },
-                { value: "'B Titr', Tahoma, Arial, sans-serif", label: 'B Titr' },
-                { value: "Tahoma, Arial, sans-serif", label: 'Tahoma' },
-                { value: "'IRANSans', Tahoma, Arial, sans-serif", label: 'IRANSans' },
-                { value: "Arial, sans-serif", label: 'Arial' }
-            ];
+        var FONT_OPTIONS = [
+            { value: "'B Nazanin', Tahoma, Arial, sans-serif", label: 'B Nazanin' },
+            { value: "'B Titr', Tahoma, Arial, sans-serif", label: 'B Titr' },
+            { value: "Tahoma, Arial, sans-serif", label: 'Tahoma' },
+            { value: "'IRANSans', Tahoma, Arial, sans-serif", label: 'IRANSans' },
+            { value: "Arial, sans-serif", label: 'Arial' },
+            { value: "'IranNastaliq', 'Nastaliq', Tahoma, Arial, sans-serif", label: 'نستعلیق' }
+        ];
 
-            var DEFAULT_SETTINGS = {
-                number: { top: 15, left: 12, width: 45, height: 10, font: FONT_OPTIONS[0].value, size: 12 },
-                date: { top: 27, left: 12, width: 45, height: 10, font: FONT_OPTIONS[0].value, size: 12 },
-                logo: { top: 8, left: 128, width: 40, height: 16, font: FONT_OPTIONS[0].value, size: 12 },
-                title: { top: 26, left: 108, width: 80, height: 16, font: FONT_OPTIONS[0].value, size: 14 },
-                barcode: { top: 15, left: 235, width: 45, height: 18, font: FONT_OPTIONS[0].value, size: 10 },
-                maintext: { top: 62, left: 35, width: 227, height: 40, font: FONT_OPTIONS[0].value, size: 15 },
-                ceo1: { top: 110, left: 35, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
-                ceo2: { top: 110, left: 207, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
-                texts: {
-                    certTitle: 'گواهینامه آموزشی',
-                    ceo1Name: 'محمدرضا زهره‌وندی',
-                    ceo1Title: 'رئیس هیأت‌مدیره سندیکای صنایع آسانسور',
-                    ceo2Name: 'محمد وحیدی',
-                    ceo2Title: 'مدیر عامل مرکز آموزش بازرگانی'
-                },
-                logoSrc: '',
-                ceo1Sig: '',
-                ceo2Sig: ''
-            };
+        var DEFAULT_SETTINGS = {
+            number: { top: 15, left: 12, width: 45, height: 10, font: FONT_OPTIONS[0].value, size: 12 },
+            date: { top: 27, left: 12, width: 45, height: 10, font: FONT_OPTIONS[0].value, size: 12 },
+            logo1: { top: 8, left: 128, width: 40, height: 16, font: FONT_OPTIONS[0].value, size: 12 },
+            logo2: { top: 8, left: 10, width: 40, height: 16, font: FONT_OPTIONS[0].value, size: 12 },
+            title: { top: 26, left: 108, width: 80, height: 16, font: FONT_OPTIONS[0].value, size: 14 },
+            barcode: { top: 15, left: 235, width: 45, height: 18, font: FONT_OPTIONS[0].value, size: 10 },
+            maintext: { top: 62, left: 35, width: 227, height: 40, font: FONT_OPTIONS[0].value, size: 15 },
+            ceo1: { top: 110, left: 35, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
+            ceo2: { top: 110, left: 207, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
+            notice1: { top: 103, left: 20, width: 257, height: 9, font: FONT_OPTIONS[0].value, size: 11 },
+            notice2: { top: 196, left: 20, width: 257, height: 9, font: FONT_OPTIONS[0].value, size: 10 },
+            texts: {
+                certTitle: 'گواهینامه آموزشی',
+                ceo1Name: 'محمد وحیدی',
+                ceo1Title: 'مدیر عامل مرکز آموزش بازرگانی',
+                ceo2Name: 'عباس ابریشمی',
+                ceo2Title: 'رییس اتحادیه آسانسور، پله برقی و خدمات وابسته',
+                notice1: 'این گواهینامه به منزله قبولی در آزمون و فعالیت در شرکت مذکور صادر گردیده و فاقد اعتبار جهت فعالیت در سایر شرکت‌ها می‌باشد.',
+                notice2: 'اعتبار این گواهینامه ۶ ماه از تاریخ آزمون بوده و قبولی نهایی منوط به پذیرفته شدن در آزمون عملی اتحادیه کشوری می‌باشد.'
+            },
+            logo1Src: '',
+            logo2Src: '',
+            ceo1Sig: '',
+            ceo2Sig: ''
+        };
 
-            function cloneDefaults() {
-                return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-            }
+        function cloneDefaults() {
+            return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+        }
 
-            function loadSettings() {
-                var settings = cloneDefaults();
-                try {
-                    var raw = localStorage.getItem(STORAGE_KEY);
-                    if (raw) {
-                        var saved = JSON.parse(raw);
-                        BOX_DEFS.forEach(function (box) {
-                            if (saved[box.key]) {
-                                settings[box.key] = Object.assign({}, settings[box.key], saved[box.key]);
-                            }
-                        });
-                        if (saved.texts) {
-                            settings.texts = Object.assign({}, settings.texts, saved.texts);
-                        }
-                        if (typeof saved.logoSrc === 'string') {
-                            settings.logoSrc = saved.logoSrc;
-                        }
-                        if (typeof saved.ceo1Sig === 'string') {
-                            settings.ceo1Sig = saved.ceo1Sig;
-                        }
-                        if (typeof saved.ceo2Sig === 'string') {
-                            settings.ceo2Sig = saved.ceo2Sig;
-                        }
-                    }
-                } catch (e) {
-                    console.error('خطا در خواندن تنظیمات ذخیره‌شده:', e);
-                }
-                return settings;
-            }
-
-            function saveSettings(settings) {
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-                } catch (e) {
-                    console.error('خطا در ذخیره تنظیمات:', e);
-                }
-            }
-
-            function applySignatureSettings() {
-                var settings = loadSettings();
-                // اعمال امضاها در قالب چاپ
-                var ceo1Sig = document.getElementById('pCeo1Signature');
-                var ceo2Sig = document.getElementById('pCeo2Signature');
-
-                if (settings.ceo1Sig) {
-                    ceo1Sig.src = settings.ceo1Sig;
-                    ceo1Sig.style.display = 'block';
-                } else {
-                    ceo1Sig.style.display = 'none';
-                }
-
-                if (settings.ceo2Sig) {
-                    ceo2Sig.src = settings.ceo2Sig;
-                    ceo2Sig.style.display = 'block';
-                } else {
-                    ceo2Sig.style.display = 'none';
-                }
-            }
-
-            function applySettings(settings) {
-                var root = document.documentElement.style;
-                BOX_DEFS.forEach(function (box) {
-                    var b = settings[box.key];
-                    root.setProperty('--' + box.key + '-box-top', b.top + 'mm');
-                    root.setProperty('--' + box.key + '-box-left', b.left + 'mm');
-                    root.setProperty('--' + box.key + '-box-width', b.width + 'mm');
-                    root.setProperty('--' + box.key + '-box-height', b.height + 'mm');
-                    root.setProperty('--' + box.key + '-box-font-family', b.font);
-                    root.setProperty('--' + box.key + '-box-font-size', b.size + 'pt');
-                });
-
-                setText('pCertTitle', settings.texts.certTitle);
-                setText('pCertTitlePreview', settings.texts.certTitle);
-                setText('pCeo1Name', settings.texts.ceo1Name);
-                setText('pCeo1NamePreview', settings.texts.ceo1Name);
-                setText('pCeo1Title', settings.texts.ceo1Title);
-                setText('pCeo1TitlePreview', settings.texts.ceo1Title);
-                setText('pCeo2Name', settings.texts.ceo2Name);
-                setText('pCeo2NamePreview', settings.texts.ceo2Name);
-                setText('pCeo2Title', settings.texts.ceo2Title);
-                setText('pCeo2TitlePreview', settings.texts.ceo2Title);
-
-                // لوگو
-                setLogoSrc('pLogo', settings.logoSrc);
-                setLogoSrc('pLogoPreview', settings.logoSrc);
-                var thumb = document.getElementById('logoThumb');
-                if (thumb) {
-                    if (settings.logoSrc) {
-                        thumb.src = settings.logoSrc;
-                        thumb.style.display = 'inline-block';
-                    } else {
-                        thumb.style.display = 'none';
-                    }
-                }
-
-                // امضاها - پیش‌نمایش
-                applySignaturePreview(settings);
-            }
-
-            function applySignaturePreview(settings) {
-                var ceo1SigPreview = document.getElementById('pCeo1SigPreview');
-                var ceo2SigPreview = document.getElementById('pCeo2SigPreview');
-                var ceo1Thumb = document.getElementById('ceo1SigThumb');
-                var ceo2Thumb = document.getElementById('ceo2SigThumb');
-
-                if (settings.ceo1Sig) {
-                    ceo1SigPreview.src = settings.ceo1Sig;
-                    ceo1SigPreview.style.display = 'block';
-                    if (ceo1Thumb) {
-                        ceo1Thumb.src = settings.ceo1Sig;
-                        ceo1Thumb.style.display = 'inline-block';
-                    }
-                } else {
-                    ceo1SigPreview.style.display = 'none';
-                    if (ceo1Thumb) {
-                        ceo1Thumb.style.display = 'none';
-                    }
-                }
-
-                if (settings.ceo2Sig) {
-                    ceo2SigPreview.src = settings.ceo2Sig;
-                    ceo2SigPreview.style.display = 'block';
-                    if (ceo2Thumb) {
-                        ceo2Thumb.src = settings.ceo2Sig;
-                        ceo2Thumb.style.display = 'inline-block';
-                    }
-                } else {
-                    ceo2SigPreview.style.display = 'none';
-                    if (ceo2Thumb) {
-                        ceo2Thumb.style.display = 'none';
-                    }
-                }
-            }
-
-            function setText(id, value) {
-                var el = document.getElementById(id);
-                if (el) el.textContent = value || '';
-            }
-
-            function setLogoSrc(id, src) {
-                var el = document.getElementById(id);
-                if (el) el.src = src || '';
-            }
-
-            function fieldId(boxKey, prop) {
-                return 'box-' + boxKey + '-' + prop;
-            }
-
-            function buildFontOptionsHtml(selected) {
-                return FONT_OPTIONS.map(function (f) {
-                    var sel = f.value === selected ? ' selected' : '';
-                    return '<option value="' + f.value.replace(/"/g, '&quot;') + '"' + sel + '>' + f.label + '</option>';
-                }).join('');
-            }
-
-            function buildAccordionForm(settings) {
-                var container = document.getElementById('certBoxAccordion');
-                if (!container) return;
-
-                var html = BOX_DEFS.map(function (box) {
-                    var b = settings[box.key];
-                    return '' +
-                        '<div class="cert-box-field-group">' +
-                        '  <h6><i class="bi bi-bounding-box"></i> ' + box.label + '</h6>' +
-                        '  <div class="row g-2">' +
-                        '    <div class="col-3"><label>بالا (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'top') + '" value="' + b.top + '"></div>' +
-                        '    <div class="col-3"><label>چپ (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'left') + '" value="' + b.left + '"></div>' +
-                        '    <div class="col-3"><label>عرض (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'width') + '" value="' + b.width + '"></div>' +
-                        '    <div class="col-3"><label>ارتفاع (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'height') + '" value="' + b.height + '"></div>' +
-                        '    <div class="col-8"><label>فونت</label><select class="form-select form-select-sm" id="' + fieldId(box.key, 'font') + '">' + buildFontOptionsHtml(b.font) + '</select></div>' +
-                        '    <div class="col-4"><label>سایز فونت (pt)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'size') + '" value="' + b.size + '"></div>' +
-                        '  </div>' +
-                        '</div>';
-                }).join('');
-
-                container.innerHTML = html;
-
-                BOX_DEFS.forEach(function (box) {
-                    ['top', 'left', 'width', 'height', 'size'].forEach(function (prop) {
-                        var input = document.getElementById(fieldId(box.key, prop));
-                        if (input) {
-                            input.addEventListener('input', function () {
-                                var num = parseFloat(input.value);
-                                if (isNaN(num)) return;
-                                currentSettings[box.key][prop] = num;
-                                applySettings(currentSettings);
-                                saveSettings(currentSettings);
-                            });
+        function loadSettings() {
+            var settings = cloneDefaults();
+            try {
+                var raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    var saved = JSON.parse(raw);
+                    BOX_DEFS.forEach(function (box) {
+                        if (saved[box.key]) {
+                            settings[box.key] = Object.assign({}, settings[box.key], saved[box.key]);
                         }
                     });
-                    var fontSelect = document.getElementById(fieldId(box.key, 'font'));
-                    if (fontSelect) {
-                        fontSelect.addEventListener('change', function () {
-                            currentSettings[box.key].font = fontSelect.value;
-                            applySettings(currentSettings);
-                            saveSettings(currentSettings);
-                        });
+                    if (saved.texts) {
+                        settings.texts = Object.assign({}, settings.texts, saved.texts);
                     }
-                });
+                    if (typeof saved.logo1Src === 'string') settings.logo1Src = saved.logo1Src;
+                    if (typeof saved.logo2Src === 'string') settings.logo2Src = saved.logo2Src;
+                    if (typeof saved.ceo1Sig === 'string') settings.ceo1Sig = saved.ceo1Sig;
+                    if (typeof saved.ceo2Sig === 'string') settings.ceo2Sig = saved.ceo2Sig;
+                }
+            } catch (e) {
+                console.error('خطا در خواندن تنظیمات ذخیره‌شده:', e);
+            }
+            return settings;
+        }
+
+        function saveSettings(settings) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+            } catch (e) {
+                console.error('خطا در ذخیره تنظیمات:', e);
+            }
+        }
+
+        function applySettings(settings) {
+            var root = document.documentElement.style;
+            BOX_DEFS.forEach(function (box) {
+                var b = settings[box.key];
+                if (!b) return;
+                root.setProperty('--' + box.key + '-box-top', b.top + 'mm');
+                root.setProperty('--' + box.key + '-box-left', b.left + 'mm');
+                root.setProperty('--' + box.key + '-box-width', b.width + 'mm');
+                root.setProperty('--' + box.key + '-box-height', b.height + 'mm');
+                root.setProperty('--' + box.key + '-box-font-family', b.font);
+                root.setProperty('--' + box.key + '-box-font-size', b.size + 'pt');
+            });
+
+            setText('pCertTitlePreview', settings.texts.certTitle);
+            setText('pCeo1NamePreview', settings.texts.ceo1Name);
+            setText('pCeo1TitlePreview', settings.texts.ceo1Title);
+            setText('pCeo2NamePreview', settings.texts.ceo2Name);
+            setText('pCeo2TitlePreview', settings.texts.ceo2Title);
+            setText('pNotice1Preview', settings.texts.notice1);
+            setText('pNotice2Preview', settings.texts.notice2);
+
+            setLogoSrc('pLogo1Preview', settings.logo1Src);
+            setLogoSrc('pLogo2Preview', settings.logo2Src);
+
+            updateLogoThumb('logo1Thumb', settings.logo1Src);
+            updateLogoThumb('logo2Thumb', settings.logo2Src);
+
+            applySignaturePreview(settings);
+        }
+
+        function updateLogoThumb(thumbId, src) {
+            var thumb = document.getElementById(thumbId);
+            if (thumb) {
+                if (src) {
+                    thumb.src = src;
+                    thumb.style.display = 'inline-block';
+                } else {
+                    thumb.style.display = 'none';
+                }
+            }
+        }
+
+        function applySignaturePreview(settings) {
+            var ceo1SigPreview = document.getElementById('pCeo1SigPreview');
+            var ceo2SigPreview = document.getElementById('pCeo2SigPreview');
+            var ceo1Thumb = document.getElementById('ceo1SigThumb');
+            var ceo2Thumb = document.getElementById('ceo2SigThumb');
+
+            if (settings.ceo1Sig) {
+                if (ceo1SigPreview) { ceo1SigPreview.src = settings.ceo1Sig; ceo1SigPreview.style.display = 'block'; }
+                if (ceo1Thumb) { ceo1Thumb.src = settings.ceo1Sig; ceo1Thumb.style.display = 'inline-block'; }
+            } else {
+                if (ceo1SigPreview) ceo1SigPreview.style.display = 'none';
+                if (ceo1Thumb) ceo1Thumb.style.display = 'none';
             }
 
-            function populateTextInputs(settings) {
-                var map = {
-                    'text-certTitle': settings.texts.certTitle,
-                    'text-ceo1Name': settings.texts.ceo1Name,
-                    'text-ceo1Title': settings.texts.ceo1Title,
-                    'text-ceo2Name': settings.texts.ceo2Name,
-                    'text-ceo2Title': settings.texts.ceo2Title
-                };
-                Object.keys(map).forEach(function (id) {
-                    var el = document.getElementById(id);
-                    if (el) el.value = map[id] || '';
-                });
+            if (settings.ceo2Sig) {
+                if (ceo2SigPreview) { ceo2SigPreview.src = settings.ceo2Sig; ceo2SigPreview.style.display = 'block'; }
+                if (ceo2Thumb) { ceo2Thumb.src = settings.ceo2Sig; ceo2Thumb.style.display = 'inline-block'; }
+            } else {
+                if (ceo2SigPreview) ceo2SigPreview.style.display = 'none';
+                if (ceo2Thumb) ceo2Thumb.style.display = 'none';
             }
 
-            function bindTextInputs() {
-                var pairs = [
-                    ['text-certTitle', 'certTitle'],
-                    ['text-ceo1Name', 'ceo1Name'],
-                    ['text-ceo1Title', 'ceo1Title'],
-                    ['text-ceo2Name', 'ceo2Name'],
-                    ['text-ceo2Title', 'ceo2Title']
-                ];
-                pairs.forEach(function (pair) {
-                    var el = document.getElementById(pair[0]);
-                    if (el) {
-                        el.addEventListener('input', function () {
-                            currentSettings.texts[pair[1]] = el.value;
+            refreshBoxPreview('ceo1');
+            refreshBoxPreview('ceo2');
+        }
+
+        function setText(id, value) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = value || '';
+        }
+
+        function setLogoSrc(id, src) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.src = src || '';
+                if (src) {
+                    el.style.mixBlendMode = 'multiply';
+                    el.style.opacity = '0.95';
+                }
+            }
+        }
+
+        function fieldId(boxKey, prop) {
+            return 'box-' + boxKey + '-' + prop;
+        }
+
+        function buildFontOptionsHtml(selected) {
+            return FONT_OPTIONS.map(function (f) {
+                var sel = f.value === selected ? ' selected' : '';
+                return '<option value="' + f.value.replace(/"/g, '&quot;') + '"' + sel + '>' + f.label + '</option>';
+            }).join('');
+        }
+
+        function getBoxPreviewContent(key, settings) {
+            switch (key) {
+                case 'number':
+                    return 'شماره: ۱۲۳۴۵';
+                case 'date':
+                    return 'تاریخ: ۱۴۰۵/۰۵/۰۱';
+                case 'logo1':
+                    if (settings.logo1Src) {
+                        return `<img src="${settings.logo1Src}" style="max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply;opacity:0.95;" alt="لوگو ۱" />`;
+                    }
+                    return '<span style="color:#999;font-size:10pt;">(لوگو ۱)</span>';
+                case 'logo2':
+                    if (settings.logo2Src) {
+                        return `<img src="${settings.logo2Src}" style="max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply;opacity:0.95;" alt="لوگو ۲" />`;
+                    }
+                    return '<span style="color:#999;font-size:10pt;">(لوگو ۲)</span>';
+                case 'barcode':
+                    return '<span style="color:#999;font-size:10pt;">(بارکد)</span>';
+                case 'title':
+                    return settings.texts.certTitle || 'گواهینامه آموزشی';
+                case 'maintext':
+                    return 'بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم نام نمونه فرزند نام پدر به شماره ملی ۰۰۰۰۰۰۰۰۰۰ از سوی شرکت نام شرکت در آزمون عنوان آزمون مورخ ۱۴۰۵/۰۱/۰۱ شرکت نموده و حائز نمره قبول گردیده است.';
+                case 'ceo1':
+                    return (settings.texts.ceo1Name || 'نام مدیرعامل') + '\n' + (settings.texts.ceo1Title || 'سمت');
+                case 'ceo2':
+                    return (settings.texts.ceo2Name || 'نام مدیرعامل') + '\n' + (settings.texts.ceo2Title || 'سمت');
+                case 'notice1':
+                    return settings.texts.notice1 || 'این گواهینامه به منزله قبولی در آزمون و فعالیت در شرکت مذکور صادر گردیده و فاقد اعتبار جهت فعالیت در سایر شرکت‌ها می‌باشد.';
+                case 'notice2':
+                    return settings.texts.notice2 || 'اعتبار این گواهینامه ۶ ماه از تاریخ آزمون بوده و قبولی نهایی منوط به پذیرفته شدن در آزمون عملی اتحادیه کشوری می‌باشد.';
+                default:
+                    return 'نمونه متن';
+            }
+        }
+
+        function buildAccordionForm(settings) {
+            var container = document.getElementById('certBoxAccordion');
+            if (!container) return;
+
+            var html = BOX_DEFS.map(function (box) {
+                var b = settings[box.key];
+                if (!b) return '';
+                var previewContent = getBoxPreviewContent(box.key, settings);
+                var previewStyle = 'background:#fff;color:#000;border:1px solid #ddd;border-radius:8px;' +
+                    'padding:8px 12px;min-height:20px;overflow:auto;max-height:120px;' +
+                    'display:flex;align-items:center;justify-content:center;' +
+                    'font-family:' + b.font + ';font-size:' + b.size + 'pt;' +
+                    'text-align:center;';
+
+                // برای بخش ceo1 و ceo2 که دو خطی هستند، جهت نمایش بهتر
+                if (box.key === 'ceo1' || box.key === 'ceo2') {
+                    previewStyle += 'flex-direction:column;line-height:1.8;';
+                }
+
+                if (box.key === 'logo1' || box.key === 'logo2' || box.key === 'barcode') {
+                    previewStyle += 'background:#f8f9fa;';
+                }
+
+                return '' +
+                    '<div class="cert-box-field-group">' +
+                    '  <h6><i class="bi bi-bounding-box"></i> ' + box.label + '</h6>' +
+                    '  <div class="row g-2">' +
+                    '    <div class="col-3"><label>بالا (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'top') + '" value="' + b.top + '"></div>' +
+                    '    <div class="col-3"><label>چپ (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'left') + '" value="' + b.left + '"></div>' +
+                    '    <div class="col-3"><label>عرض (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'width') + '" value="' + b.width + '"></div>' +
+                    '    <div class="col-3"><label>ارتفاع (mm)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'height') + '" value="' + b.height + '"></div>' +
+                    '    <div class="col-8"><label>فونت</label><select class="form-select form-select-sm" id="' + fieldId(box.key, 'font') + '">' + buildFontOptionsHtml(b.font) + '</select></div>' +
+                    '    <div class="col-4"><label>سایز فونت (pt)</label><input type="number" step="1" class="form-control form-control-sm" id="' + fieldId(box.key, 'size') + '" value="' + b.size + '"></div>' +
+                    '    <div class="col-12">' +
+                    '      <label class="d-block mb-1">پیش‌نمایش فونت و سایز (اندازه واقعی)</label>' +
+                    '      <div id="preview-' + box.key + '" dir="rtl" style="' + previewStyle + '">' + previewContent + '</div>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '</div>';
+            }).join('');
+
+            container.innerHTML = html;
+
+            BOX_DEFS.forEach(function (box) {
+                ['top', 'left', 'width', 'height', 'size'].forEach(function (prop) {
+                    var input = document.getElementById(fieldId(box.key, prop));
+                    if (input) {
+                        input.addEventListener('input', function () {
+                            var num = parseFloat(input.value);
+                            if (isNaN(num)) return;
+                            if (!currentSettings[box.key]) currentSettings[box.key] = {};
+                            currentSettings[box.key][prop] = num;
                             applySettings(currentSettings);
                             saveSettings(currentSettings);
+                            refreshBoxPreview(box.key);
                         });
                     }
                 });
-            }
-
-            function bindLogoUpload() {
-                var input = document.getElementById('logoUploadInput');
-                var removeBtn = document.getElementById('logoRemoveBtn');
-                if (input) {
-                    input.addEventListener('change', function () {
-                        var file = input.files && input.files[0];
-                        if (!file) return;
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            currentSettings.logoSrc = e.target.result;
-                            applySettings(currentSettings);
-                            saveSettings(currentSettings);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                }
-                if (removeBtn) {
-                    removeBtn.addEventListener('click', function () {
-                        currentSettings.logoSrc = '';
-                        if (input) input.value = '';
+                var fontSelect = document.getElementById(fieldId(box.key, 'font'));
+                if (fontSelect) {
+                    fontSelect.addEventListener('change', function () {
+                        if (!currentSettings[box.key]) currentSettings[box.key] = {};
+                        currentSettings[box.key].font = fontSelect.value;
                         applySettings(currentSettings);
                         saveSettings(currentSettings);
-                    });
-                }
-            }
-
-            function bindSignatureUploads() {
-                // امضای مدیرعامل چپ
-                var ceo1Input = document.getElementById('ceo1SigUpload');
-                var ceo1Remove = document.getElementById('ceo1SigRemove');
-                if (ceo1Input) {
-                    ceo1Input.addEventListener('change', function () {
-                        var file = ceo1Input.files && ceo1Input.files[0];
-                        if (!file) return;
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            currentSettings.ceo1Sig = e.target.result;
-                            applySettings(currentSettings);
-                            saveSettings(currentSettings);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                }
-                if (ceo1Remove) {
-                    ceo1Remove.addEventListener('click', function () {
-                        currentSettings.ceo1Sig = '';
-                        if (ceo1Input) ceo1Input.value = '';
-                        applySettings(currentSettings);
-                        saveSettings(currentSettings);
-                    });
-                }
-
-                // امضای مدیرعامل راست
-                var ceo2Input = document.getElementById('ceo2SigUpload');
-                var ceo2Remove = document.getElementById('ceo2SigRemove');
-                if (ceo2Input) {
-                    ceo2Input.addEventListener('change', function () {
-                        var file = ceo2Input.files && ceo2Input.files[0];
-                        if (!file) return;
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            currentSettings.ceo2Sig = e.target.result;
-                            applySettings(currentSettings);
-                            saveSettings(currentSettings);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                }
-                if (ceo2Remove) {
-                    ceo2Remove.addEventListener('click', function () {
-                        currentSettings.ceo2Sig = '';
-                        if (ceo2Input) ceo2Input.value = '';
-                        applySettings(currentSettings);
-                        saveSettings(currentSettings);
-                    });
-                }
-            }
-
-            function bindResetButton() {
-                var btn = document.getElementById('certSettingsResetBtn');
-                if (btn) {
-                    btn.addEventListener('click', function () {
-                        currentSettings = cloneDefaults();
-                        saveSettings(currentSettings);
-                        applySettings(currentSettings);
-                        buildAccordionForm(currentSettings);
-                        populateTextInputs(currentSettings);
-                        var logoInput = document.getElementById('logoUploadInput');
-                        if (logoInput) logoInput.value = '';
-                        var ceo1Input = document.getElementById('ceo1SigUpload');
-                        if (ceo1Input) ceo1Input.value = '';
-                        var ceo2Input = document.getElementById('ceo2SigUpload');
-                        if (ceo2Input) ceo2Input.value = '';
-                    });
-                }
-            }
-
-            var currentSettings = loadSettings();
-
-            document.addEventListener('DOMContentLoaded', function () {
-                applySettings(currentSettings);
-                buildAccordionForm(currentSettings);
-                populateTextInputs(currentSettings);
-                bindTextInputs();
-                bindLogoUpload();
-                bindSignatureUploads();
-                bindResetButton();
-
-                var modalEl = document.getElementById('certSettingsModal');
-                if (modalEl) {
-                    modalEl.addEventListener('shown.bs.modal', function () {
-                        buildAccordionForm(currentSettings);
-                        populateTextInputs(currentSettings);
-                        applySignaturePreview(currentSettings);
+                        refreshBoxPreview(box.key);
                     });
                 }
             });
-        })();
+        }
 
-        // ===== کدهای آماده‌سازی صفحه =====
+        function refreshBoxPreview(key) {
+            var el = document.getElementById('preview-' + key);
+            if (!el) return;
+            var b = currentSettings[key];
+            if (!b) return;
+
+            el.style.fontFamily = b.font;
+            el.style.fontSize = b.size + 'pt';
+
+            var content = getBoxPreviewContent(key, currentSettings);
+            el.innerHTML = content;
+
+            if (key === 'logo1' || key === 'logo2' || key === 'barcode') {
+                el.style.display = 'flex';
+                el.style.alignItems = 'center';
+                el.style.justifyContent = 'center';
+                el.style.background = '#f8f9fa';
+            } else if (key === 'ceo1' || key === 'ceo2') {
+                el.style.display = 'flex';
+                el.style.flexDirection = 'column';
+                el.style.alignItems = 'center';
+                el.style.justifyContent = 'center';
+                el.style.background = '#fff';
+                el.style.textAlign = 'center';
+                el.style.lineHeight = '1.8';
+            } else {
+                el.style.display = 'flex';
+                el.style.alignItems = 'center';
+                el.style.justifyContent = 'center';
+                el.style.background = '#fff';
+                el.style.textAlign = 'center';
+            }
+        }
+
+        function refreshDependentBoxPreviews(textKey) {
+            var map = {
+                certTitle: ['title'],
+                ceo1Name: ['ceo1'],
+                ceo1Title: ['ceo1'],
+                ceo2Name: ['ceo2'],
+                ceo2Title: ['ceo2'],
+                notice1: ['notice1'],
+                notice2: ['notice2'],
+                logo1Src: ['logo1'],
+                logo2Src: ['logo2'],
+                ceo1Sig: ['ceo1'],
+                ceo2Sig: ['ceo2']
+            };
+            (map[textKey] || []).forEach(refreshBoxPreview);
+        }
+
+        function populateTextInputs(settings) {
+            var map = {
+                'text-certTitle': settings.texts.certTitle,
+                'text-ceo1Name': settings.texts.ceo1Name,
+                'text-ceo1Title': settings.texts.ceo1Title,
+                'text-ceo2Name': settings.texts.ceo2Name,
+                'text-ceo2Title': settings.texts.ceo2Title,
+                'text-notice1': settings.texts.notice1,
+                'text-notice2': settings.texts.notice2
+            };
+            Object.keys(map).forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el) el.value = map[id] || '';
+            });
+        }
+
+        function bindTextInputs() {
+            var pairs = [
+                ['text-certTitle', 'certTitle'],
+                ['text-ceo1Name', 'ceo1Name'],
+                ['text-ceo1Title', 'ceo1Title'],
+                ['text-ceo2Name', 'ceo2Name'],
+                ['text-ceo2Title', 'ceo2Title'],
+                ['text-notice1', 'notice1'],
+                ['text-notice2', 'notice2']
+            ];
+            pairs.forEach(function (pair) {
+                var el = document.getElementById(pair[0]);
+                if (el) {
+                    el.addEventListener('input', function () {
+                        currentSettings.texts[pair[1]] = el.value;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshDependentBoxPreviews(pair[1]);
+                    });
+                }
+            });
+        }
+
+        function bindLogoUploads() {
+            // لوگو ۱
+            var input1 = document.getElementById('logo1UploadInput');
+            var remove1 = document.getElementById('logo1RemoveBtn');
+            if (input1) {
+                input1.addEventListener('change', function () {
+                    var file = input1.files && input1.files[0];
+                    if (!file) return;
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentSettings.logo1Src = e.target.result;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('logo1');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            if (remove1) {
+                remove1.addEventListener('click', function () {
+                    currentSettings.logo1Src = '';
+                    if (input1) input1.value = '';
+                    applySettings(currentSettings);
+                    saveSettings(currentSettings);
+                    refreshBoxPreview('logo1');
+                });
+            }
+
+            // لوگو ۲
+            var input2 = document.getElementById('logo2UploadInput');
+            var remove2 = document.getElementById('logo2RemoveBtn');
+            if (input2) {
+                input2.addEventListener('change', function () {
+                    var file = input2.files && input2.files[0];
+                    if (!file) return;
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentSettings.logo2Src = e.target.result;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('logo2');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            if (remove2) {
+                remove2.addEventListener('click', function () {
+                    currentSettings.logo2Src = '';
+                    if (input2) input2.value = '';
+                    applySettings(currentSettings);
+                    saveSettings(currentSettings);
+                    refreshBoxPreview('logo2');
+                });
+            }
+        }
+
+        function bindSignatureUploads() {
+            var ceo1Input = document.getElementById('ceo1SigUpload');
+            var ceo1Remove = document.getElementById('ceo1SigRemove');
+            if (ceo1Input) {
+                ceo1Input.addEventListener('change', function () {
+                    var file = ceo1Input.files && ceo1Input.files[0];
+                    if (!file) return;
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentSettings.ceo1Sig = e.target.result;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo1');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            if (ceo1Remove) {
+                ceo1Remove.addEventListener('click', function () {
+                    currentSettings.ceo1Sig = '';
+                    if (ceo1Input) ceo1Input.value = '';
+                    applySettings(currentSettings);
+                    saveSettings(currentSettings);
+                    refreshBoxPreview('ceo1');
+                });
+            }
+
+            var ceo2Input = document.getElementById('ceo2SigUpload');
+            var ceo2Remove = document.getElementById('ceo2SigRemove');
+            if (ceo2Input) {
+                ceo2Input.addEventListener('change', function () {
+                    var file = ceo2Input.files && ceo2Input.files[0];
+                    if (!file) return;
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentSettings.ceo2Sig = e.target.result;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo2');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            if (ceo2Remove) {
+                ceo2Remove.addEventListener('click', function () {
+                    currentSettings.ceo2Sig = '';
+                    if (ceo2Input) ceo2Input.value = '';
+                    applySettings(currentSettings);
+                    saveSettings(currentSettings);
+                    refreshBoxPreview('ceo2');
+                });
+            }
+        }
+
+        function bindResetButton() {
+            var btn = document.getElementById('certSettingsResetBtn');
+            if (btn) {
+                btn.addEventListener('click', function () {
+                    currentSettings = cloneDefaults();
+                    saveSettings(currentSettings);
+                    applySettings(currentSettings);
+                    buildAccordionForm(currentSettings);
+                    populateTextInputs(currentSettings);
+                    var logo1Input = document.getElementById('logo1UploadInput');
+                    if (logo1Input) logo1Input.value = '';
+                    var logo2Input = document.getElementById('logo2UploadInput');
+                    if (logo2Input) logo2Input.value = '';
+                    var ceo1Input = document.getElementById('ceo1SigUpload');
+                    if (ceo1Input) ceo1Input.value = '';
+                    var ceo2Input = document.getElementById('ceo2SigUpload');
+                    if (ceo2Input) ceo2Input.value = '';
+                });
+            }
+        }
+
+        var currentSettings = loadSettings();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            applySettings(currentSettings);
+            buildAccordionForm(currentSettings);
+            populateTextInputs(currentSettings);
+            bindTextInputs();
+            bindLogoUploads();
+            bindSignatureUploads();
+            bindResetButton();
+
+            var modalEl = document.getElementById('certSettingsModal');
+            if (modalEl) {
+                modalEl.addEventListener('shown.bs.modal', function () {
+                    buildAccordionForm(currentSettings);
+                    populateTextInputs(currentSettings);
+                    applySignaturePreview(currentSettings);
+                });
+            }
+
+            var btnAllDb = document.getElementById('btnPrintAllDb');
+            if (btnAllDb) {
+                btnAllDb.addEventListener('click', printAllFromDatabase);
+            }
+        });
+
         $(document).ready(function () {
             $('#NationalCode').on('input', function () {
                 let value = this.value;
@@ -1471,6 +1865,5 @@
             }
         });
     </script>
-
 </body>
 </html>

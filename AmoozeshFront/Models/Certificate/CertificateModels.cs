@@ -1,13 +1,11 @@
-﻿// Models/Certificate/CertificateDto.cs
+﻿using AmoozeshFront.Core.Enums;
 using System.ComponentModel.DataAnnotations;
-using AmoozeshFront.Core.Enums;
 
 namespace AmoozeshFront.Models.Certificate
 {
     public class CertificateDto
     {
-        public long Id { get; set; } // تغییر به long برای هماهنگی با بک‌اند
-
+        public long Id { get; set; }
         public string CertificateNumber { get; set; }
         public bool Gender { get; set; }
         public string FullName { get; set; }
@@ -22,9 +20,8 @@ namespace AmoozeshFront.Models.Certificate
         public string Barcode { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string GenderDisplay => Gender ? "زن" : "مرد";
-
-        // اضافه کردن QR Code
         public string QRCodeBase64 { get; set; }
+        public string? ExamDatePersian { get; set; }
     }
 
     public class CertificateSearchViewModel
@@ -35,6 +32,7 @@ namespace AmoozeshFront.Models.Certificate
         public string NationalCode { get; set; }
 
         public List<CertificateDto> Results { get; set; } = new();
+        public List<CertificateDto> AllCertificates { get; set; } = new(); // نتایج کل سیستم برای چاپ یکجا
         public bool HasSearched { get; set; } = false;
     }
 

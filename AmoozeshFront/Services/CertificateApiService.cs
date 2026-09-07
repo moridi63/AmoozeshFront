@@ -10,6 +10,7 @@ namespace AmoozeshFront.Services
         Task<ApiListResponse<CertificateDto>> GetCertificatesByNationalCodeAsync(string nationalCode, string token);
         Task<ApiResponse<CertificateDto>> GetCertificateByIdAsync(long id, string token);
         Task<ApiResponse<CertificateDto>> GetCertificatePublicInfoAsync(long id);
+        Task<ApiListResponse<CertificateDto>> GetAllCertificatesAsync(string token);
     }
 
     public class CertificateApiService : IAmoozeshService
@@ -26,7 +27,43 @@ namespace AmoozeshFront.Services
             _httpClient = httpClient;
             _logger = logger;
         }
+        public async Task<ApiListResponse<CertificateDto>> GetAllCertificatesAsync(string token)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, "api/Certificates");
 
+                if (!string.IsNullOrEmpty(token))
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("خطا در دریافت لیست کل گواهینامه‌ها: {StatusCode}", response.StatusCode);
+                    return new ApiListResponse<CertificateDto>
+                    {
+                        Success = false,
+                        Message = response.StatusCode == System.Net.HttpStatusCode.Unauthorized
+                            ? "نشست شما منقضی شده، دوباره وارد شوید"
+                            : "خطا در دریافت اطلاعات از سرور"
+                    };
+                }
+
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<ApiListResponse<CertificateDto>>(responseStream, _jsonOptions);
+                return result ?? new ApiListResponse<CertificateDto> { Success = false, Message = "پاسخ نامعتبر از سرور" };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطا در دریافت لیست کل گواهینامه‌ها");
+                return new ApiListResponse<CertificateDto>
+                {
+                    Success = false,
+                    Message = "خطا در ارتباط با سرور"
+                };
+            }
+        }
         public async Task<ApiListResponse<CertificateDto>> GetCertificatesByNationalCodeAsync(string nationalCode, string token)
         {
             try
