@@ -38,6 +38,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
+        @@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+        @@font -face {
+            font-family: 'IranNastaliq';
+            src: url('https://cdn.jsdelivr.net/gh/sepandhaghighi/fonts@master/IranNastaliq/IranNastaliq.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
         :root {
             --glass-bg: rgba(255, 255, 255, 0.07);
             --glass-border: rgba(255, 255, 255, 0.1);
@@ -112,6 +122,14 @@
             --notice2-box-height: 9mm;
             --notice2-box-font-family: var(--cert-font-default);
             --notice2-box-font-size: 10pt;
+            --ceo1-signature-width: 60mm;
+            --ceo1-signature-height: 25mm;
+            --ceo1-signature-top-offset: 50%;
+            --ceo1-signature-left-offset: 50%;
+            --ceo2-signature-width: 60mm;
+            --ceo2-signature-height: 25mm;
+            --ceo2-signature-top-offset: 50%;
+            --ceo2-signature-left-offset: 50%;
         }
 
         body {
@@ -476,7 +494,7 @@
             font-family: var(--maintext-box-font-family);
             font-size: var(--maintext-box-font-size);
             font-weight: normal;
-            line-height: 2.0;
+            line-height: 2.6;
             text-align: justify;
         }
 
@@ -484,7 +502,7 @@
             font-weight: 700;
             padding: 0 4px;
             display: inline-block;
-            min-width: 90px;
+            min-width: 60px;
             text-align: center;
         }
 
@@ -507,15 +525,29 @@
                 z-index: 2;
                 font-size: inherit;
                 font-family: inherit;
-                font-weight: bold;
+                font-weight: normal !important;
             }
 
             .cert-box-ceo1 .cert-sig-title {
                 font-size: inherit;
-                font-weight: bold;
+                font-weight: normal !important;
                 color: #000;
                 position: relative;
                 z-index: 2;
+            }
+
+            .cert-box-ceo1 .cert-signature-img {
+                position: absolute;
+                top: var(--ceo1-signature-top-offset, 50%);
+                left: var(--ceo1-signature-left-offset, 50%);
+                transform: translate(-50%, -50%);
+                width: var(--ceo1-signature-width, 60mm);
+                height: var(--ceo1-signature-height, 25mm);
+                object-fit: contain;
+                z-index: 1;
+                pointer-events: none;
+                mix-blend-mode: multiply;
+                opacity: 0.95;
             }
 
         .cert-box-ceo2 {
@@ -537,30 +569,30 @@
                 z-index: 2;
                 font-size: inherit;
                 font-family: inherit;
-                font-weight: bold;
+                font-weight: normal !important;
             }
 
             .cert-box-ceo2 .cert-sig-title {
                 font-size: inherit;
-                font-weight: bold;
+                font-weight: normal !important;
                 color: #000;
                 position: relative;
                 z-index: 2;
             }
 
-        .cert-signature-img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 60mm;
-            max-height: 25mm;
-            object-fit: contain;
-            z-index: 1;
-            pointer-events: none;
-            mix-blend-mode: multiply;
-            opacity: 0.95;
-        }
+            .cert-box-ceo2 .cert-signature-img {
+                position: absolute;
+                top: var(--ceo2-signature-top-offset, 50%);
+                left: var(--ceo2-signature-left-offset, 50%);
+                transform: translate(-50%, -50%);
+                width: var(--ceo2-signature-width, 60mm);
+                height: var(--ceo2-signature-height, 25mm);
+                object-fit: contain;
+                z-index: 1;
+                pointer-events: none;
+                mix-blend-mode: multiply;
+                opacity: 0.95;
+            }
 
         .cert-box-notice1 {
             top: var(--notice1-box-top);
@@ -586,7 +618,7 @@
 
         .cert-sig-title {
             font-size: inherit;
-            font-weight: bold;
+            font-weight: normal !important;
             color: #000;
             position: relative;
             z-index: 2;
@@ -635,26 +667,158 @@
             }
 
         .cert-preview-stage {
-            width: calc(297mm * 0.42);
-            height: calc(210mm * 0.42);
+            width: 100%;
+            height: auto;
             overflow: hidden;
             border: 2px dashed #999;
             margin: 0 auto;
             background: #f1f2f4;
             position: sticky;
             top: 10px;
+            aspect-ratio: 297 / 210;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .cert-page-preview {
-            transform: scale(0.42);
-            transform-origin: top left;
+            width: 100%;
+            height: 100%;
+            transform: none;
+            transform-origin: center center;
+            position: relative;
+        }
+
+        .cert-preview-stage .cert-page {
+            width: 100%;
+            height: 100%;
+            max-height: none;
+            transform: none;
+            position: relative;
+        }
+
+        .cert-preview-stage .cert-box {
+            position: absolute;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            padding: 2px;
+            direction: rtl;
+            font-weight: bold;
+        }
+
+        .cert-preview-stage .cert-box-number {
+            top: calc(var(--number-box-top) * 0.42);
+            left: calc(var(--number-box-left) * 0.42);
+            width: calc(var(--number-box-width) * 0.42);
+            height: calc(var(--number-box-height) * 0.42);
+            font-size: calc(var(--number-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-date {
+            top: calc(var(--date-box-top) * 0.42);
+            left: calc(var(--date-box-left) * 0.42);
+            width: calc(var(--date-box-width) * 0.42);
+            height: calc(var(--date-box-height) * 0.42);
+            font-size: calc(var(--date-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-logo1 {
+            top: calc(var(--logo1-box-top) * 0.42);
+            left: calc(var(--logo1-box-left) * 0.42);
+            width: calc(var(--logo1-box-width) * 0.42);
+            height: calc(var(--logo1-box-height) * 0.42);
+            font-size: calc(var(--logo1-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-logo2 {
+            top: calc(var(--logo2-box-top) * 0.42);
+            left: calc(var(--logo2-box-left) * 0.42);
+            width: calc(var(--logo2-box-width) * 0.42);
+            height: calc(var(--logo2-box-height) * 0.42);
+            font-size: calc(var(--logo2-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-title {
+            top: calc(var(--title-box-top) * 0.42);
+            left: calc(var(--title-box-left) * 0.42);
+            width: calc(var(--title-box-width) * 0.42);
+            height: calc(var(--title-box-height) * 0.42);
+            font-size: calc(var(--title-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-barcode {
+            top: calc(var(--barcode-box-top) * 0.42);
+            left: calc(var(--barcode-box-left) * 0.42);
+            width: calc(var(--barcode-box-width) * 0.42);
+            height: calc(var(--barcode-box-height) * 0.42);
+            font-size: calc(var(--barcode-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-maintext {
+            top: calc(var(--maintext-box-top) * 0.42);
+            left: calc(var(--maintext-box-left) * 0.42);
+            width: calc(var(--maintext-box-width) * 0.42);
+            height: calc(var(--maintext-box-height) * 0.42);
+            font-size: calc(var(--maintext-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-ceo1 {
+            top: calc(var(--ceo1-box-top) * 0.42);
+            left: calc(var(--ceo1-box-left) * 0.42);
+            width: calc(var(--ceo1-box-width) * 0.42);
+            height: calc(var(--ceo1-box-height) * 0.42);
+            font-size: calc(var(--ceo1-box-font-size) * 0.42);
+        }
+
+            .cert-preview-stage .cert-box-ceo1 .cert-signature-img {
+                width: calc(var(--ceo1-signature-width) * 0.42);
+                height: calc(var(--ceo1-signature-height) * 0.42);
+                top: var(--ceo1-signature-top-offset);
+                left: var(--ceo1-signature-left-offset);
+                transform: translate(-50%, -50%);
+            }
+
+        .cert-preview-stage .cert-box-ceo2 {
+            top: calc(var(--ceo2-box-top) * 0.42);
+            left: calc(var(--ceo2-box-left) * 0.42);
+            width: calc(var(--ceo2-box-width) * 0.42);
+            height: calc(var(--ceo2-box-height) * 0.42);
+            font-size: calc(var(--ceo2-box-font-size) * 0.42);
+        }
+
+            .cert-preview-stage .cert-box-ceo2 .cert-signature-img {
+                width: calc(var(--ceo2-signature-width) * 0.42);
+                height: calc(var(--ceo2-signature-height) * 0.42);
+                top: var(--ceo2-signature-top-offset);
+                left: var(--ceo2-signature-left-offset);
+                transform: translate(-50%, -50%);
+            }
+
+        .cert-preview-stage .cert-box-notice1 {
+            top: calc(var(--notice1-box-top) * 0.42);
+            left: calc(var(--notice1-box-left) * 0.42);
+            width: calc(var(--notice1-box-width) * 0.42);
+            height: calc(var(--notice1-box-height) * 0.42);
+            font-size: calc(var(--notice1-box-font-size) * 0.42);
+        }
+
+        .cert-preview-stage .cert-box-notice2 {
+            top: calc(var(--notice2-box-top) * 0.42);
+            left: calc(var(--notice2-box-left) * 0.42);
+            width: calc(var(--notice2-box-width) * 0.42);
+            height: calc(var(--notice2-box-height) * 0.42);
+            font-size: calc(var(--notice2-box-font-size) * 0.42);
         }
 
         @@media (max-width: 991px) {
             .cert-preview-stage {
                 position: static;
                 width: 100%;
-                height: calc(100vw * 0.42 * (210 / 297));
+                aspect-ratio: 297 / 210;
             }
         }
 
@@ -667,6 +831,23 @@
                     page-break-after: avoid !important;
                     break-after: avoid !important;
                 }
+
+            .cert-signature-img {
+                width: var(--ceo1-signature-width, 60mm) !important;
+                height: var(--ceo1-signature-height, 25mm) !important;
+                top: var(--ceo1-signature-top-offset, 50%) !important;
+                left: var(--ceo1-signature-left-offset, 50%) !important;
+                object-fit: contain !important;
+                mix-blend-mode: multiply !important;
+                opacity: 0.95 !important;
+            }
+
+            .cert-box-ceo2 .cert-signature-img {
+                width: var(--ceo2-signature-width, 60mm) !important;
+                height: var(--ceo2-signature-height, 25mm) !important;
+                top: var(--ceo2-signature-top-offset, 50%) !important;
+                left: var(--ceo2-signature-left-offset, 50%) !important;
+            }
         }
     </style>
 </head>
@@ -898,7 +1079,7 @@
                     <div class="row g-4">
                         <div class="col-lg-7">
                             <p class="text-muted small mb-3">
-                                مقادیر هر کادر با پیش‌فرض پر شده‌اند. تغییرات بلافاصله در پیش‌نمایش اعمال شده و به‌صورت خودکار ذخیره می‌شوند.
+                                مقادیر هر کادر با پیش‌فرض پر شده‌اند. تغییرات بلافاصله در پیش‌نمایش اعمال شده و پس از کلیک روی دکمه "ذخیره تنظیمات" ذخیره می‌شوند.
                             </p>
 
                             <div class="cert-box-field-group">
@@ -984,7 +1165,43 @@
                                         </div>
                                     </div>
                                 </div>
-                                <small class="text-muted">تصویر امضا به‌صورت خودکار در پشت متن قرار می‌گیرد.</small>
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-3">
+                                        <label>عرض امضا (mm) - چپ</label>
+                                        <input type="number" step="1" class="form-control form-control-sm" id="ceo1-sig-width" value="60">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>ارتفاع امضا (mm) - چپ</label>
+                                        <input type="number" step="1" class="form-control form-control-sm" id="ceo1-sig-height" value="25">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>موقعیت عمودی (%) - چپ</label>
+                                        <input type="number" step="1" min="0" max="100" class="form-control form-control-sm" id="ceo1-sig-top" value="50">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>موقعیت افقی (%) - چپ</label>
+                                        <input type="number" step="1" min="0" max="100" class="form-control form-control-sm" id="ceo1-sig-left" value="50">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-3">
+                                        <label>عرض امضا (mm) - راست</label>
+                                        <input type="number" step="1" class="form-control form-control-sm" id="ceo2-sig-width" value="60">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>ارتفاع امضا (mm) - راست</label>
+                                        <input type="number" step="1" class="form-control form-control-sm" id="ceo2-sig-height" value="25">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>موقعیت عمودی (%) - راست</label>
+                                        <input type="number" step="1" min="0" max="100" class="form-control form-control-sm" id="ceo2-sig-top" value="50">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>موقعیت افقی (%) - راست</label>
+                                        <input type="number" step="1" min="0" max="100" class="form-control form-control-sm" id="ceo2-sig-left" value="50">
+                                    </div>
+                                </div>
+                                <small class="text-muted mt-2 d-block">تصویر امضا به‌صورت خودکار در پشت متن قرار می‌گیرد.</small>
                             </div>
 
                             <div id="certBoxAccordion"></div>
@@ -992,15 +1209,15 @@
 
                         <div class="col-lg-5">
                             <h6 class="fw-bold mb-2"><i class="bi bi-eye"></i> پیش‌نمایش زنده</h6>
-                            <div class="cert-preview-stage">
-                                <div class="cert-page cert-page-preview">
-                                    <div class="cert-box cert-box-number">شماره: <span>۱۲۳۴۵</span></div>
-                                    <div class="cert-box cert-box-date">تاریخ: <span>۱۴۰۵/۰۵/۰۱</span></div>
-                                    <div class="cert-box cert-box-logo1"><img id="pLogo1Preview" src="" alt="لوگو ۱"></div>
-                                    <div class="cert-box cert-box-logo2"><img id="pLogo2Preview" src="" alt="لوگو ۲"></div>
-                                    <div class="cert-box cert-box-title"><span id="pCertTitlePreview">گواهینامه آموزشی</span></div>
-                                    <div class="cert-box cert-box-barcode">بارکد نمونه</div>
-                                    <div class="cert-box cert-box-maintext">
+                            <div class="cert-preview-stage" id="fullPreviewStage">
+                                <div class="cert-page" id="fullPreviewPage">
+                                    <div class="cert-box cert-box-number" id="previewNumber">شماره: <span>۱۲۳۴۵</span></div>
+                                    <div class="cert-box cert-box-date" id="previewDate">تاریخ: <span>۱۴۰۵/۰۵/۰۱</span></div>
+                                    <div class="cert-box cert-box-logo1" id="previewLogo1"><img id="pLogo1Preview" src="" alt="لوگو ۱"></div>
+                                    <div class="cert-box cert-box-logo2" id="previewLogo2"><img id="pLogo2Preview" src="" alt="لوگو ۲"></div>
+                                    <div class="cert-box cert-box-title" id="previewTitle"><span id="pCertTitlePreview">گواهینامه آموزشی</span></div>
+                                    <div class="cert-box cert-box-barcode" id="previewBarcode">بارکد نمونه</div>
+                                    <div class="cert-box cert-box-maintext" id="previewMaintext">
                                         <p style="margin:0;">
                                             بدین وسیله گواهی می‌شود جناب آقای/سرکار خانم <span class="cert-fill">نام نمونه</span>
                                             فرزند <span class="cert-fill">نام پدر</span>
@@ -1011,21 +1228,21 @@
                                             شرکت نموده و حائز نمره قبول گردیده است.
                                         </p>
                                     </div>
-                                    <div class="cert-box cert-box-notice1">
+                                    <div class="cert-box cert-box-notice1" id="previewNotice1">
                                         <span id="pNotice1Preview">این گواهینامه به منزله قبولی در آزمون و فعالیت در شرکت مذکور صادر گردیده و فاقد اعتبار جهت فعالیت در سایر شرکت‌ها می‌باشد.</span>
                                     </div>
-                                    <div class="cert-box cert-box-notice2">
+                                    <div class="cert-box cert-box-notice2" id="previewNotice2">
                                         <span id="pNotice2Preview">اعتبار این گواهینامه ۶ ماه از تاریخ آزمون بوده و قبولی نهایی منوط به پذیرفته شدن در آزمون عملی اتحادیه کشوری می‌باشد.</span>
                                     </div>
-                                    <div class="cert-box cert-box-ceo1">
+                                    <div class="cert-box cert-box-ceo1" id="previewCeo1">
                                         <img id="pCeo1SigPreview" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
-                                        <div id="pCeo1NamePreview">محمدرضا زهره‌وندی</div>
-                                        <div class="cert-sig-title" id="pCeo1TitlePreview">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
+                                        <div id="pCeo1NamePreview" style="font-weight:normal !important;">محمدرضا زهره‌وندی</div>
+                                        <div class="cert-sig-title" id="pCeo1TitlePreview" style="font-weight:normal !important;">رئیس هیأت‌مدیره سندیکای صنایع آسانسور</div>
                                     </div>
-                                    <div class="cert-box cert-box-ceo2">
+                                    <div class="cert-box cert-box-ceo2" id="previewCeo2">
                                         <img id="pCeo2SigPreview" class="cert-signature-img" src="" alt="امضا" style="display:none;" />
-                                        <div id="pCeo2NamePreview">محمد وحیدی</div>
-                                        <div class="cert-sig-title" id="pCeo2TitlePreview">مدیر عامل مرکز آموزش بازرگانی</div>
+                                        <div id="pCeo2NamePreview" style="font-weight:normal !important;">محمد وحیدی</div>
+                                        <div class="cert-sig-title" id="pCeo2TitlePreview" style="font-weight:normal !important;">مدیر عامل مرکز آموزش بازرگانی</div>
                                     </div>
                                 </div>
                             </div>
@@ -1035,7 +1252,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" id="certSettingsResetBtn">بازگشت به پیش‌فرض</button>
-                    <button type="button" class="btn btn-gold" data-bs-dismiss="modal">تمام شد</button>
+                    <button type="button" class="btn btn-success" id="certSettingsSaveBtn">
+                        <i class="bi bi-save"></i> ذخیره تنظیمات
+                    </button>
+                    <button type="button" class="btn btn-gold" data-bs-dismiss="modal">بستن</button>
                 </div>
             </div>
         </div>
@@ -1049,7 +1269,6 @@
         let currentQRBase64 = '';
         let currentQRInfo = '';
 
-        // تابع تبدیل اعداد انگلیسی به فارسی
         function toPersianNumber(num) {
             if (num === undefined || num === null) return '';
             var persianDigits = '۰۱۲۳۴۵۶۷۸۹';
@@ -1058,11 +1277,9 @@
             });
         }
 
-        // تابع تبدیل تاریخ میلادی به شمسی
         function toPersianDate(dateStr) {
             if (!dateStr) return '';
             try {
-                // اگر تاریخ به صورت "yyyy/MM/dd" است
                 var parts = dateStr.split('/');
                 if (parts.length === 3) {
                     var year = parseInt(parts[0]);
@@ -1115,68 +1332,71 @@
                 : '<span style="font-size:10pt;">---</span>';
 
             var logo1Html = settings.logo1Src
-                ? `<img src="${settings.logo1Src}" alt="لوگو ۱" style="mix-blend-mode:multiply;opacity:0.95;" />`
+                ? `<img src="${settings.logo1Src}" alt="لوگو ۱" style="mix-blend-mode:multiply;opacity:0.95;max-width:100%;max-height:100%;" />`
                 : '';
 
             var logo2Html = settings.logo2Src
-                ? `<img src="${settings.logo2Src}" alt="لوگو ۲" style="mix-blend-mode:multiply;opacity:0.95;" />`
+                ? `<img src="${settings.logo2Src}" alt="لوگو ۲" style="mix-blend-mode:multiply;opacity:0.95;max-width:100%;max-height:100%;" />`
                 : '';
 
-            var ceo1SigStyle = settings.ceo1Sig ? `src="${settings.ceo1Sig}" style="display:block;"` : 'src="" style="display:none;"';
-            var ceo2SigStyle = settings.ceo2Sig ? `src="${settings.ceo2Sig}" style="display:block;"` : 'src="" style="display:none;"';
+            var ceo1SigStyle = settings.ceo1Sig
+                ? `src="${settings.ceo1Sig}" style="display:block;width:${settings.ceo1SigWidth || 60}mm;height:${settings.ceo1SigHeight || 25}mm;top:${settings.ceo1SigTopOffset || 50}%;left:${settings.ceo1SigLeftOffset || 50}%;object-fit:contain;position:absolute;transform:translate(-50%, -50%);z-index:1;pointer-events:none;mix-blend-mode:multiply;opacity:0.95;"`
+                : 'src="" style="display:none;"';
 
-            // تبدیل شماره گواهینامه به فارسی
+            var ceo2SigStyle = settings.ceo2Sig
+                ? `src="${settings.ceo2Sig}" style="display:block;width:${settings.ceo2SigWidth || 60}mm;height:${settings.ceo2SigHeight || 25}mm;top:${settings.ceo2SigTopOffset || 50}%;left:${settings.ceo2SigLeftOffset || 50}%;object-fit:contain;position:absolute;transform:translate(-50%, -50%);z-index:1;pointer-events:none;mix-blend-mode:multiply;opacity:0.95;"`
+                : 'src="" style="display:none;"';
+
             var certNumberPersian = toPersianNumber(data.certNumber);
-
-            // تبدیل تاریخ آزمون به شمسی
             var examDatePersian = toPersianDate(data.examDate);
+            var nationalCodePersian = toPersianNumber(data.nationalCode);
 
             return `
-                <div class="cert-page">
-                    <div class="cert-box cert-box-number">شماره: <span>${certNumberPersian || '---'}</span></div>
-                    <div class="cert-box cert-box-date">تاریخ: <span>${todayPersian}</span></div>
-                    <div class="cert-box cert-box-logo1">${logo1Html}</div>
-                    <div class="cert-box cert-box-logo2">${logo2Html}</div>
-                    <div class="cert-box cert-box-title">
-                        <span>${settings.texts.certTitle || 'گواهینامه آموزشی'}</span>
-                    </div>
-                    <div class="cert-box cert-box-barcode">${qrHtml}</div>
-                    <div class="cert-box cert-box-maintext">
-                        <p style="margin:0;">
-                            بدین وسیله گواهی می‌شود
-                            <span style="font-weight:bold;">${genderTitle}</span>
-                            <span class="cert-fill">${data.fullName || ''}</span>
-                            فرزند
-                            <span class="cert-fill">${data.fatherName || ''}</span>
-                            به شماره ملی
-                            <span class="cert-fill">${data.nationalCode || ''}</span>
-                            از سوی شرکت
-                            <span class="cert-fill">${data.companyName || ''}</span>
-                            در آزمون
-                            <span class="cert-fill">${data.examTitle || ''}</span>
-                            مورخ
-                            <span class="cert-fill">${examDatePersian || ''}</span>
-                            شرکت نموده و حائز نمره قبول گردیده است.
-                        </p>
-                    </div>
-                    <div class="cert-box cert-box-notice1">
-                        <span>${settings.texts.notice1 || ''}</span>
-                    </div>
-                    <div class="cert-box cert-box-notice2">
-                        <span>${settings.texts.notice2 || ''}</span>
-                    </div>
-                    <div class="cert-box cert-box-ceo1">
-                        <img class="cert-signature-img" ${ceo1SigStyle} alt="امضا" />
-                        <div>${settings.texts.ceo1Name || ''}</div>
-                        <div class="cert-sig-title">${settings.texts.ceo1Title || ''}</div>
-                    </div>
-                    <div class="cert-box cert-box-ceo2">
-                        <img class="cert-signature-img" ${ceo2SigStyle} alt="امضا" />
-                        <div>${settings.texts.ceo2Name || ''}</div>
-                        <div class="cert-sig-title">${settings.texts.ceo2Title || ''}</div>
-                    </div>
-                </div>
-            `;
+                        <div class="cert-page">
+                            <div class="cert-box cert-box-number">شماره: <span>${certNumberPersian || '---'}</span></div>
+                            <div class="cert-box cert-box-date">تاریخ: <span>${todayPersian}</span></div>
+                            <div class="cert-box cert-box-logo1">${logo1Html}</div>
+                            <div class="cert-box cert-box-logo2">${logo2Html}</div>
+                            <div class="cert-box cert-box-title">
+                                <span>${settings.texts.certTitle || 'گواهینامه آموزشی'}</span>
+                            </div>
+                            <div class="cert-box cert-box-barcode">${qrHtml}</div>
+                            <div class="cert-box cert-box-maintext">
+                                <p style="margin:0;">
+                                    بدین وسیله گواهی می‌شود
+                                    <span style="font-weight:bold;">${genderTitle}</span>
+                                    <span class="cert-fill">${data.fullName || ''}</span>
+                                    فرزند
+                                    <span class="cert-fill">${data.fatherName || ''}</span>
+                                    به شماره ملی
+                                    <span class="cert-fill">${nationalCodePersian || ''}</span>
+                                    از سوی شرکت
+                                    <span class="cert-fill">${data.companyName || ''}</span>
+                                    در آزمون
+                                    <span class="cert-fill">${data.examTitle || ''}</span>
+                                    مورخ
+                                    <span class="cert-fill">${examDatePersian || ''}</span>
+                                    شرکت نموده و حائز نمره قبول گردیده است.
+                                </p>
+                            </div>
+                            <div class="cert-box cert-box-notice1">
+                                <span>${settings.texts.notice1 || ''}</span>
+                            </div>
+                            <div class="cert-box cert-box-notice2">
+                                <span>${settings.texts.notice2 || ''}</span>
+                            </div>
+                            <div class="cert-box cert-box-ceo1">
+                                <img class="cert-signature-img" ${ceo1SigStyle} alt="امضا" />
+                                <div style="font-weight:normal !important;">${settings.texts.ceo1Name || ''}</div>
+                                <div class="cert-sig-title" style="font-weight:normal !important;">${settings.texts.ceo1Title || ''}</div>
+                            </div>
+                            <div class="cert-box cert-box-ceo2">
+                                <img class="cert-signature-img" ${ceo2SigStyle} alt="امضا" />
+                                <div style="font-weight:normal !important;">${settings.texts.ceo2Name || ''}</div>
+                                <div class="cert-sig-title" style="font-weight:normal !important;">${settings.texts.ceo2Title || ''}</div>
+                            </div>
+                        </div>
+                    `;
         }
 
         function printCertificate(index) {
@@ -1253,7 +1473,7 @@
             document.body.classList.remove('is-printing-cert');
         });
 
-        var STORAGE_KEY = 'certTemplateSettingsV3';
+        var STORAGE_KEY = 'certTemplateSettingsV5';
 
         var BOX_DEFS = [
             { key: 'number', label: 'شماره' },
@@ -1269,13 +1489,27 @@
             { key: 'notice2', label: 'توضیح خط دوم (اعتبار و آزمون عملی)' }
         ];
 
+        var PREVIEW_ELEMENT_MAP = {
+            number: 'previewNumber',
+            date: 'previewDate',
+            logo1: 'previewLogo1',
+            logo2: 'previewLogo2',
+            title: 'previewTitle',
+            barcode: 'previewBarcode',
+            maintext: 'previewMaintext',
+            ceo1: 'previewCeo1',
+            ceo2: 'previewCeo2',
+            notice1: 'previewNotice1',
+            notice2: 'previewNotice2'
+        };
+
         var FONT_OPTIONS = [
             { value: "'B Nazanin', Tahoma, Arial, sans-serif", label: 'B Nazanin' },
             { value: "'B Titr', Tahoma, Arial, sans-serif", label: 'B Titr' },
             { value: "Tahoma, Arial, sans-serif", label: 'Tahoma' },
             { value: "'IRANSans', Tahoma, Arial, sans-serif", label: 'IRANSans' },
             { value: "Arial, sans-serif", label: 'Arial' },
-            { value: "'IranNastaliq', 'Nastaliq', Tahoma, Arial, sans-serif", label: 'نستعلیق' }
+            { value: "'IranNastaliq', 'Nastaliq', serif", label: 'نستعلیق' }
         ];
 
         var DEFAULT_SETTINGS = {
@@ -1285,9 +1519,9 @@
             logo2: { top: 8, left: 10, width: 40, height: 16, font: FONT_OPTIONS[0].value, size: 12 },
             title: { top: 26, left: 108, width: 80, height: 16, font: FONT_OPTIONS[0].value, size: 14 },
             barcode: { top: 15, left: 235, width: 45, height: 18, font: FONT_OPTIONS[0].value, size: 10 },
-            maintext: { top: 62, left: 35, width: 227, height: 40, font: FONT_OPTIONS[0].value, size: 15 },
-            ceo1: { top: 110, left: 35, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
-            ceo2: { top: 110, left: 207, width: 55, height: 28, font: FONT_OPTIONS[0].value, size: 13 },
+            maintext: { top: 62, left: 35, width: 227, height: 40, font: FONT_OPTIONS[5].value, size: 15 },
+            ceo1: { top: 110, left: 35, width: 55, height: 28, font: FONT_OPTIONS[5].value, size: 13 },
+            ceo2: { top: 110, left: 207, width: 55, height: 28, font: FONT_OPTIONS[5].value, size: 13 },
             notice1: { top: 103, left: 20, width: 257, height: 9, font: FONT_OPTIONS[0].value, size: 11 },
             notice2: { top: 196, left: 20, width: 257, height: 9, font: FONT_OPTIONS[0].value, size: 10 },
             texts: {
@@ -1302,7 +1536,15 @@
             logo1Src: '',
             logo2Src: '',
             ceo1Sig: '',
-            ceo2Sig: ''
+            ceo2Sig: '',
+            ceo1SigWidth: 60,
+            ceo1SigHeight: 25,
+            ceo1SigTopOffset: 50,
+            ceo1SigLeftOffset: 50,
+            ceo2SigWidth: 60,
+            ceo2SigHeight: 25,
+            ceo2SigTopOffset: 50,
+            ceo2SigLeftOffset: 50
         };
 
         function cloneDefaults() {
@@ -1327,6 +1569,14 @@
                     if (typeof saved.logo2Src === 'string') settings.logo2Src = saved.logo2Src;
                     if (typeof saved.ceo1Sig === 'string') settings.ceo1Sig = saved.ceo1Sig;
                     if (typeof saved.ceo2Sig === 'string') settings.ceo2Sig = saved.ceo2Sig;
+                    if (typeof saved.ceo1SigWidth === 'number') settings.ceo1SigWidth = saved.ceo1SigWidth;
+                    if (typeof saved.ceo1SigHeight === 'number') settings.ceo1SigHeight = saved.ceo1SigHeight;
+                    if (typeof saved.ceo1SigTopOffset === 'number') settings.ceo1SigTopOffset = saved.ceo1SigTopOffset;
+                    if (typeof saved.ceo1SigLeftOffset === 'number') settings.ceo1SigLeftOffset = saved.ceo1SigLeftOffset;
+                    if (typeof saved.ceo2SigWidth === 'number') settings.ceo2SigWidth = saved.ceo2SigWidth;
+                    if (typeof saved.ceo2SigHeight === 'number') settings.ceo2SigHeight = saved.ceo2SigHeight;
+                    if (typeof saved.ceo2SigTopOffset === 'number') settings.ceo2SigTopOffset = saved.ceo2SigTopOffset;
+                    if (typeof saved.ceo2SigLeftOffset === 'number') settings.ceo2SigLeftOffset = saved.ceo2SigLeftOffset;
                 }
             } catch (e) {
                 console.error('خطا در خواندن تنظیمات ذخیره‌شده:', e);
@@ -1355,6 +1605,19 @@
                 root.setProperty('--' + box.key + '-box-font-size', b.size + 'pt');
             });
 
+            root.setProperty('--ceo1-signature-width', (settings.ceo1SigWidth || 60) + 'mm');
+            root.setProperty('--ceo1-signature-height', (settings.ceo1SigHeight || 25) + 'mm');
+            root.setProperty('--ceo1-signature-top-offset', (settings.ceo1SigTopOffset || 50) + '%');
+            root.setProperty('--ceo1-signature-left-offset', (settings.ceo1SigLeftOffset || 50) + '%');
+            root.setProperty('--ceo2-signature-width', (settings.ceo2SigWidth || 60) + 'mm');
+            root.setProperty('--ceo2-signature-height', (settings.ceo2SigHeight || 25) + 'mm');
+            root.setProperty('--ceo2-signature-top-offset', (settings.ceo2SigTopOffset || 50) + '%');
+            root.setProperty('--ceo2-signature-left-offset', (settings.ceo2SigLeftOffset || 50) + '%');
+
+            updateFullPreview(settings);
+        }
+
+        function updateFullPreview(settings) {
             setText('pCertTitlePreview', settings.texts.certTitle);
             setText('pCeo1NamePreview', settings.texts.ceo1Name);
             setText('pCeo1TitlePreview', settings.texts.ceo1Title);
@@ -1370,6 +1633,16 @@
             updateLogoThumb('logo2Thumb', settings.logo2Src);
 
             applySignaturePreview(settings);
+
+            BOX_DEFS.forEach(function (box) {
+                var previewEl = document.getElementById(PREVIEW_ELEMENT_MAP[box.key]);
+                if (previewEl) {
+                    var b = settings[box.key];
+                    if (b) {
+                        previewEl.style.fontFamily = b.font;
+                    }
+                }
+            });
         }
 
         function updateLogoThumb(thumbId, src) {
@@ -1391,7 +1664,14 @@
             var ceo2Thumb = document.getElementById('ceo2SigThumb');
 
             if (settings.ceo1Sig) {
-                if (ceo1SigPreview) { ceo1SigPreview.src = settings.ceo1Sig; ceo1SigPreview.style.display = 'block'; }
+                if (ceo1SigPreview) {
+                    ceo1SigPreview.src = settings.ceo1Sig;
+                    ceo1SigPreview.style.display = 'block';
+                    ceo1SigPreview.style.width = (settings.ceo1SigWidth || 60) + 'mm';
+                    ceo1SigPreview.style.height = (settings.ceo1SigHeight || 25) + 'mm';
+                    ceo1SigPreview.style.top = (settings.ceo1SigTopOffset || 50) + '%';
+                    ceo1SigPreview.style.left = (settings.ceo1SigLeftOffset || 50) + '%';
+                }
                 if (ceo1Thumb) { ceo1Thumb.src = settings.ceo1Sig; ceo1Thumb.style.display = 'inline-block'; }
             } else {
                 if (ceo1SigPreview) ceo1SigPreview.style.display = 'none';
@@ -1399,15 +1679,19 @@
             }
 
             if (settings.ceo2Sig) {
-                if (ceo2SigPreview) { ceo2SigPreview.src = settings.ceo2Sig; ceo2SigPreview.style.display = 'block'; }
+                if (ceo2SigPreview) {
+                    ceo2SigPreview.src = settings.ceo2Sig;
+                    ceo2SigPreview.style.display = 'block';
+                    ceo2SigPreview.style.width = (settings.ceo2SigWidth || 60) + 'mm';
+                    ceo2SigPreview.style.height = (settings.ceo2SigHeight || 25) + 'mm';
+                    ceo2SigPreview.style.top = (settings.ceo2SigTopOffset || 50) + '%';
+                    ceo2SigPreview.style.left = (settings.ceo2SigLeftOffset || 50) + '%';
+                }
                 if (ceo2Thumb) { ceo2Thumb.src = settings.ceo2Sig; ceo2Thumb.style.display = 'inline-block'; }
             } else {
                 if (ceo2SigPreview) ceo2SigPreview.style.display = 'none';
                 if (ceo2Thumb) ceo2Thumb.style.display = 'none';
             }
-
-            refreshBoxPreview('ceo1');
-            refreshBoxPreview('ceo2');
         }
 
         function setText(id, value) {
@@ -1486,13 +1770,40 @@
                     'font-family:' + b.font + ';font-size:' + b.size + 'pt;' +
                     'text-align:center;';
 
-                // برای بخش ceo1 و ceo2 که دو خطی هستند، جهت نمایش بهتر
                 if (box.key === 'ceo1' || box.key === 'ceo2') {
                     previewStyle += 'flex-direction:column;line-height:1.8;';
                 }
 
                 if (box.key === 'logo1' || box.key === 'logo2' || box.key === 'barcode') {
                     previewStyle += 'background:#f8f9fa;';
+                }
+
+                var signatureSettingsHtml = '';
+                if (box.key === 'ceo1' || box.key === 'ceo2') {
+                    var sigWidthKey = box.key === 'ceo1' ? 'ceo1SigWidth' : 'ceo2SigWidth';
+                    var sigHeightKey = box.key === 'ceo1' ? 'ceo1SigHeight' : 'ceo2SigHeight';
+                    var sigTopKey = box.key === 'ceo1' ? 'ceo1SigTopOffset' : 'ceo2SigTopOffset';
+                    var sigLeftKey = box.key === 'ceo1' ? 'ceo1SigLeftOffset' : 'ceo2SigLeftOffset';
+                    signatureSettingsHtml = `
+                                <div class="row g-2 mt-2 border-top pt-2">
+                                    <div class="col-3">
+                                        <label><i class="bi bi-arrows-expand"></i> عرض (mm)</label>
+                                        <input type="number" step="1" class="form-control form-control-sm" id="${box.key}-sig-width" value="${settings[sigWidthKey] || 60}">
+                                    </div>
+                                    <div class="col-3">
+                                        <label><i class="bi bi-arrows-expand-vertical"></i> ارتفاع (mm)</label>
+                                        <input type="number" step="1" class="form-control form-control-sm" id="${box.key}-sig-height" value="${settings[sigHeightKey] || 25}">
+                                    </div>
+                                    <div class="col-3">
+                                        <label><i class="bi bi-arrow-up"></i> عمودی (%)</label>
+                                        <input type="number" step="1" min="0" max="100" class="form-control form-control-sm" id="${box.key}-sig-top" value="${settings[sigTopKey] || 50}">
+                                    </div>
+                                    <div class="col-3">
+                                        <label><i class="bi bi-arrow-left"></i> افقی (%)</label>
+                                        <input type="number" step="1" min="0" max="100" class="form-control form-control-sm" id="${box.key}-sig-left" value="${settings[sigLeftKey] || 50}">
+                                    </div>
+                                </div>
+                            `;
                 }
 
                 return '' +
@@ -1509,6 +1820,7 @@
                     '      <label class="d-block mb-1">پیش‌نمایش فونت و سایز (اندازه واقعی)</label>' +
                     '      <div id="preview-' + box.key + '" dir="rtl" style="' + previewStyle + '">' + previewContent + '</div>' +
                     '    </div>' +
+                    signatureSettingsHtml +
                     '  </div>' +
                     '</div>';
             }).join('');
@@ -1540,6 +1852,63 @@
                         refreshBoxPreview(box.key);
                     });
                 }
+
+                if (box.key === 'ceo1' || box.key === 'ceo2') {
+                    var sigWidthInput = document.getElementById(box.key + '-sig-width');
+                    var sigHeightInput = document.getElementById(box.key + '-sig-height');
+                    var sigTopInput = document.getElementById(box.key + '-sig-top');
+                    var sigLeftInput = document.getElementById(box.key + '-sig-left');
+
+                    var sigWidthKey = box.key === 'ceo1' ? 'ceo1SigWidth' : 'ceo2SigWidth';
+                    var sigHeightKey = box.key === 'ceo1' ? 'ceo1SigHeight' : 'ceo2SigHeight';
+                    var sigTopKey = box.key === 'ceo1' ? 'ceo1SigTopOffset' : 'ceo2SigTopOffset';
+                    var sigLeftKey = box.key === 'ceo1' ? 'ceo1SigLeftOffset' : 'ceo2SigLeftOffset';
+
+                    if (sigWidthInput) {
+                        sigWidthInput.addEventListener('input', function () {
+                            var val = parseFloat(sigWidthInput.value);
+                            if (!isNaN(val) && val > 0) {
+                                currentSettings[sigWidthKey] = val;
+                                applySettings(currentSettings);
+                                saveSettings(currentSettings);
+                                refreshBoxPreview(box.key);
+                            }
+                        });
+                    }
+                    if (sigHeightInput) {
+                        sigHeightInput.addEventListener('input', function () {
+                            var val = parseFloat(sigHeightInput.value);
+                            if (!isNaN(val) && val > 0) {
+                                currentSettings[sigHeightKey] = val;
+                                applySettings(currentSettings);
+                                saveSettings(currentSettings);
+                                refreshBoxPreview(box.key);
+                            }
+                        });
+                    }
+                    if (sigTopInput) {
+                        sigTopInput.addEventListener('input', function () {
+                            var val = parseFloat(sigTopInput.value);
+                            if (!isNaN(val) && val >= 0 && val <= 100) {
+                                currentSettings[sigTopKey] = val;
+                                applySettings(currentSettings);
+                                saveSettings(currentSettings);
+                                refreshBoxPreview(box.key);
+                            }
+                        });
+                    }
+                    if (sigLeftInput) {
+                        sigLeftInput.addEventListener('input', function () {
+                            var val = parseFloat(sigLeftInput.value);
+                            if (!isNaN(val) && val >= 0 && val <= 100) {
+                                currentSettings[sigLeftKey] = val;
+                                applySettings(currentSettings);
+                                saveSettings(currentSettings);
+                                refreshBoxPreview(box.key);
+                            }
+                        });
+                    }
+                }
             });
         }
 
@@ -1568,6 +1937,18 @@
                 el.style.background = '#fff';
                 el.style.textAlign = 'center';
                 el.style.lineHeight = '1.8';
+
+                var sigPreview = el.querySelector('.cert-signature-img');
+                if (sigPreview) {
+                    var sigWidthKey = key === 'ceo1' ? 'ceo1SigWidth' : 'ceo2SigWidth';
+                    var sigHeightKey = key === 'ceo1' ? 'ceo1SigHeight' : 'ceo2SigHeight';
+                    var sigTopKey = key === 'ceo1' ? 'ceo1SigTopOffset' : 'ceo2SigTopOffset';
+                    var sigLeftKey = key === 'ceo1' ? 'ceo1SigLeftOffset' : 'ceo2SigLeftOffset';
+                    sigPreview.style.width = (currentSettings[sigWidthKey] || 60) + 'mm';
+                    sigPreview.style.height = (currentSettings[sigHeightKey] || 25) + 'mm';
+                    sigPreview.style.top = (currentSettings[sigTopKey] || 50) + '%';
+                    sigPreview.style.left = (currentSettings[sigLeftKey] || 50) + '%';
+                }
             } else {
                 el.style.display = 'flex';
                 el.style.alignItems = 'center';
@@ -1634,7 +2015,6 @@
         }
 
         function bindLogoUploads() {
-            // لوگو ۱
             var input1 = document.getElementById('logo1UploadInput');
             var remove1 = document.getElementById('logo1RemoveBtn');
             if (input1) {
@@ -1661,7 +2041,6 @@
                 });
             }
 
-            // لوگو ۲
             var input2 = document.getElementById('logo2UploadInput');
             var remove2 = document.getElementById('logo2RemoveBtn');
             if (input2) {
@@ -1741,6 +2120,180 @@
                     refreshBoxPreview('ceo2');
                 });
             }
+
+            var ceo1SigWidth = document.getElementById('ceo1-sig-width');
+            var ceo1SigHeight = document.getElementById('ceo1-sig-height');
+            var ceo1SigTop = document.getElementById('ceo1-sig-top');
+            var ceo1SigLeft = document.getElementById('ceo1-sig-left');
+            var ceo2SigWidth = document.getElementById('ceo2-sig-width');
+            var ceo2SigHeight = document.getElementById('ceo2-sig-height');
+            var ceo2SigTop = document.getElementById('ceo2-sig-top');
+            var ceo2SigLeft = document.getElementById('ceo2-sig-left');
+
+            if (ceo1SigWidth) {
+                ceo1SigWidth.addEventListener('input', function () {
+                    var val = parseFloat(ceo1SigWidth.value);
+                    if (!isNaN(val) && val > 0) {
+                        currentSettings.ceo1SigWidth = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo1');
+                    }
+                });
+            }
+            if (ceo1SigHeight) {
+                ceo1SigHeight.addEventListener('input', function () {
+                    var val = parseFloat(ceo1SigHeight.value);
+                    if (!isNaN(val) && val > 0) {
+                        currentSettings.ceo1SigHeight = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo1');
+                    }
+                });
+            }
+            if (ceo1SigTop) {
+                ceo1SigTop.addEventListener('input', function () {
+                    var val = parseFloat(ceo1SigTop.value);
+                    if (!isNaN(val) && val >= 0 && val <= 100) {
+                        currentSettings.ceo1SigTopOffset = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo1');
+                    }
+                });
+            }
+            if (ceo1SigLeft) {
+                ceo1SigLeft.addEventListener('input', function () {
+                    var val = parseFloat(ceo1SigLeft.value);
+                    if (!isNaN(val) && val >= 0 && val <= 100) {
+                        currentSettings.ceo1SigLeftOffset = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo1');
+                    }
+                });
+            }
+
+            if (ceo2SigWidth) {
+                ceo2SigWidth.addEventListener('input', function () {
+                    var val = parseFloat(ceo2SigWidth.value);
+                    if (!isNaN(val) && val > 0) {
+                        currentSettings.ceo2SigWidth = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo2');
+                    }
+                });
+            }
+            if (ceo2SigHeight) {
+                ceo2SigHeight.addEventListener('input', function () {
+                    var val = parseFloat(ceo2SigHeight.value);
+                    if (!isNaN(val) && val > 0) {
+                        currentSettings.ceo2SigHeight = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo2');
+                    }
+                });
+            }
+            if (ceo2SigTop) {
+                ceo2SigTop.addEventListener('input', function () {
+                    var val = parseFloat(ceo2SigTop.value);
+                    if (!isNaN(val) && val >= 0 && val <= 100) {
+                        currentSettings.ceo2SigTopOffset = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo2');
+                    }
+                });
+            }
+            if (ceo2SigLeft) {
+                ceo2SigLeft.addEventListener('input', function () {
+                    var val = parseFloat(ceo2SigLeft.value);
+                    if (!isNaN(val) && val >= 0 && val <= 100) {
+                        currentSettings.ceo2SigLeftOffset = val;
+                        applySettings(currentSettings);
+                        saveSettings(currentSettings);
+                        refreshBoxPreview('ceo2');
+                    }
+                });
+            }
+        }
+
+        function saveCurrentSettings() {
+            // خواندن تمام مقادیر از فیلدها
+            BOX_DEFS.forEach(function (box) {
+                if (!currentSettings[box.key]) currentSettings[box.key] = {};
+                ['top', 'left', 'width', 'height', 'size'].forEach(function (prop) {
+                    var input = document.getElementById(fieldId(box.key, prop));
+                    if (input) {
+                        var val = parseFloat(input.value);
+                        if (!isNaN(val)) {
+                            currentSettings[box.key][prop] = val;
+                        }
+                    }
+                });
+                var fontSelect = document.getElementById(fieldId(box.key, 'font'));
+                if (fontSelect) {
+                    currentSettings[box.key].font = fontSelect.value;
+                }
+            });
+
+            // خواندن متن‌ها
+            var textPairs = [
+                ['text-certTitle', 'certTitle'],
+                ['text-ceo1Name', 'ceo1Name'],
+                ['text-ceo1Title', 'ceo1Title'],
+                ['text-ceo2Name', 'ceo2Name'],
+                ['text-ceo2Title', 'ceo2Title'],
+                ['text-notice1', 'notice1'],
+                ['text-notice2', 'notice2']
+            ];
+            textPairs.forEach(function (pair) {
+                var el = document.getElementById(pair[0]);
+                if (el) {
+                    currentSettings.texts[pair[1]] = el.value;
+                }
+            });
+
+            // خواندن تنظیمات امضا
+            var sigSettings = [
+                ['ceo1-sig-width', 'ceo1SigWidth'],
+                ['ceo1-sig-height', 'ceo1SigHeight'],
+                ['ceo1-sig-top', 'ceo1SigTopOffset'],
+                ['ceo1-sig-left', 'ceo1SigLeftOffset'],
+                ['ceo2-sig-width', 'ceo2SigWidth'],
+                ['ceo2-sig-height', 'ceo2SigHeight'],
+                ['ceo2-sig-top', 'ceo2SigTopOffset'],
+                ['ceo2-sig-left', 'ceo2SigLeftOffset']
+            ];
+            sigSettings.forEach(function (pair) {
+                var el = document.getElementById(pair[0]);
+                if (el) {
+                    var val = parseFloat(el.value);
+                    if (!isNaN(val)) {
+                        currentSettings[pair[1]] = val;
+                    }
+                }
+            });
+
+            // ذخیره در localStorage
+            saveSettings(currentSettings);
+            applySettings(currentSettings);
+
+            // نمایش پیام تایید
+            var saveBtn = document.getElementById('certSettingsSaveBtn');
+            var originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> ذخیره شد!';
+            saveBtn.classList.add('btn-success');
+            setTimeout(function () {
+                saveBtn.innerHTML = originalText;
+                saveBtn.classList.remove('btn-success');
+            }, 2000);
+
+            // به‌روزرسانی پیش‌نمایش
+            buildAccordionForm(currentSettings);
         }
 
         function bindResetButton() {
@@ -1760,7 +2313,30 @@
                     if (ceo1Input) ceo1Input.value = '';
                     var ceo2Input = document.getElementById('ceo2SigUpload');
                     if (ceo2Input) ceo2Input.value = '';
+                    var ceo1SigWidth = document.getElementById('ceo1-sig-width');
+                    var ceo1SigHeight = document.getElementById('ceo1-sig-height');
+                    var ceo1SigTop = document.getElementById('ceo1-sig-top');
+                    var ceo1SigLeft = document.getElementById('ceo1-sig-left');
+                    var ceo2SigWidth = document.getElementById('ceo2-sig-width');
+                    var ceo2SigHeight = document.getElementById('ceo2-sig-height');
+                    var ceo2SigTop = document.getElementById('ceo2-sig-top');
+                    var ceo2SigLeft = document.getElementById('ceo2-sig-left');
+                    if (ceo1SigWidth) ceo1SigWidth.value = 60;
+                    if (ceo1SigHeight) ceo1SigHeight.value = 25;
+                    if (ceo1SigTop) ceo1SigTop.value = 50;
+                    if (ceo1SigLeft) ceo1SigLeft.value = 50;
+                    if (ceo2SigWidth) ceo2SigWidth.value = 60;
+                    if (ceo2SigHeight) ceo2SigHeight.value = 25;
+                    if (ceo2SigTop) ceo2SigTop.value = 50;
+                    if (ceo2SigLeft) ceo2SigLeft.value = 50;
                 });
+            }
+        }
+
+        function bindSaveButton() {
+            var btn = document.getElementById('certSettingsSaveBtn');
+            if (btn) {
+                btn.addEventListener('click', saveCurrentSettings);
             }
         }
 
@@ -1774,13 +2350,22 @@
             bindLogoUploads();
             bindSignatureUploads();
             bindResetButton();
+            bindSaveButton();
 
             var modalEl = document.getElementById('certSettingsModal');
             if (modalEl) {
                 modalEl.addEventListener('shown.bs.modal', function () {
                     buildAccordionForm(currentSettings);
                     populateTextInputs(currentSettings);
-                    applySignaturePreview(currentSettings);
+                    applySettings(currentSettings);
+                    document.getElementById('ceo1-sig-width').value = currentSettings.ceo1SigWidth || 60;
+                    document.getElementById('ceo1-sig-height').value = currentSettings.ceo1SigHeight || 25;
+                    document.getElementById('ceo1-sig-top').value = currentSettings.ceo1SigTopOffset || 50;
+                    document.getElementById('ceo1-sig-left').value = currentSettings.ceo1SigLeftOffset || 50;
+                    document.getElementById('ceo2-sig-width').value = currentSettings.ceo2SigWidth || 60;
+                    document.getElementById('ceo2-sig-height').value = currentSettings.ceo2SigHeight || 25;
+                    document.getElementById('ceo2-sig-top').value = currentSettings.ceo2SigTopOffset || 50;
+                    document.getElementById('ceo2-sig-left').value = currentSettings.ceo2SigLeftOffset || 50;
                 });
             }
 

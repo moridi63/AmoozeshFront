@@ -27,25 +27,11 @@ namespace AmoozeshFront.Services
 
         public string GenerateCertificateQRCode(CertificateData data)
         {
-            var baseUrl = _configuration["AppSettings:BaseUrl"] ?? "https://certificate.ibtc.ir";
+            // تغییر محتوای QR Code به آدرس لاگین
+            var loginUrl = "https://ibtc.ir";
 
-            var qrData = new
-            {
-                id = data.Id,
-                certificateNumber = data.CertificateNumber,
-                fullName = data.FullName,
-                nationalCode = data.NationalCode,
-                examTitle = data.ExamTitle,
-                examDate = data.ExamDate?.ToString("yyyy-MM-dd"),
-                companyName = data.CompanyName,
-                fatherName = data.FatherName,
-                gender = data.Gender,
-                status = data.Status,
-                verificationUrl = $"{baseUrl}/Certificate/Verify/{data.Id}"
-            };
-
-            var jsonData = JsonSerializer.Serialize(qrData);
-            return GenerateQRCode(jsonData);
+            // فقط آدرس لاگین را برگردان (به جای JSON)
+            return GenerateQRCode(loginUrl);
         }
     }
 }
