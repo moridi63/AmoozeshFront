@@ -127,7 +127,8 @@ namespace AmoozeshFront.Controllers
                     examTitle = c.ExamTitle ?? "",
                     examDate = c.ExamDate.HasValue ? c.ExamDate.Value.ToString("yyyy/MM/dd") : (c.ExamDatePersian ?? ""),
                     certNumber = c.CertificateNumber ?? "",
-                    qrCodeBase64 = _qrCodeService.GenerateCertificateQRCode(MapToCertificateData(c))
+                    qrCodeBase64 = _qrCodeService.GenerateCertificateQRCode(MapToCertificateData(c)),
+                    gender = c.Gender  // اضافه کردن فیلد gender برای استفاده در view
                 }).ToList();
 
                 return Json(new { success = true, data });
@@ -185,7 +186,7 @@ namespace AmoozeshFront.Controllers
                 ExamDate = cert.ExamDate,
                 CompanyName = cert.CompanyName,
                 FatherName = cert.FatherName,
-                Gender = cert.Gender,
+                Gender = cert.Gender,  // اضافه کردن این خط - مقدار bool را به CertificateData منتقل می‌کند
                 Status = cert.StatusDisplay
             };
         }
