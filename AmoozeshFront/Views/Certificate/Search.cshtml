@@ -814,6 +814,29 @@
             font-size: calc(var(--notice2-box-font-size) * 0.42);
         }
 
+        /* ===== پس‌زمینه گواهینامه (اختیاری) ===== */
+        .cert-bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            z-index: 0;
+            pointer-events: none;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .cert-page {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .cert-box {
+            z-index: 1;
+        }
+
         @@media (max-width: 991px) {
             .cert-preview-stage {
                 position: static;
@@ -867,6 +890,10 @@
                     <button type="button" class="btn btn-settings-cert" id="btnPrintAllDb">
                         <i class="bi bi-printer-fill"></i> چاپ تمام گواهینامه‌های سیستم
                     </button>
+                    <label class="btn btn-settings-cert d-flex align-items-center gap-2 mb-0" style="cursor:pointer;">
+                        <input type="checkbox" class="form-check-input cert-bg-toggle m-0" id="chkPrintBackground">
+                        <span>چاپ همراه با پس‌زمینه (طرح حاشیه)</span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -1083,6 +1110,14 @@
                             </p>
 
                             <div class="cert-box-field-group">
+                                <h6><i class="bi bi-image"></i> پس‌زمینه گواهینامه</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input cert-bg-toggle" type="checkbox" role="switch" id="chkPrintBackgroundModal">
+                                    <label class="form-check-label" for="chkPrintBackgroundModal">چاپ همراه با پس‌زمینه</label>
+                                </div>
+                            </div>
+
+                            <div class="cert-box-field-group">
                                 <h6><i class="bi bi-image"></i> لوگوها</h6>
                                 <div class="row g-3">
                                     <div class="col-md-6">
@@ -1211,6 +1246,7 @@
                             <h6 class="fw-bold mb-2"><i class="bi bi-eye"></i> پیش‌نمایش زنده</h6>
                             <div class="cert-preview-stage" id="fullPreviewStage">
                                 <div class="cert-page" id="fullPreviewPage">
+                                    <img id="pBgPreview" class="cert-bg-img" src="" alt="" style="display:none;">
                                     <div class="cert-box cert-box-number" id="previewNumber">شماره: <span>۱۲۳۴۵</span></div>
                                     <div class="cert-box cert-box-date" id="previewDate">تاریخ: <span>۱۴۰۵/۰۵/۰۱</span></div>
                                     <div class="cert-box cert-box-logo1" id="previewLogo1"><img id="pLogo1Preview" src="" alt="لوگو ۱"></div>
@@ -1266,6 +1302,7 @@
 
     <script>
         window.certificatesData = @Html.Raw(certificatesJson);
+        var CERT_BG_URL = '@Url.Content("~/images/certificate-bg.png")';
         let currentQRBase64 = '';
         let currentQRInfo = '';
 
@@ -1327,6 +1364,10 @@
 
             var genderTitle = data.gender === true ? 'جناب آقای' : 'سرکار خانم';
 
+            var bgHtml = settings.useBackground
+                ? '<img class="cert-bg-img" src="' + CERT_BG_URL + '" alt="" />'
+                : '';
+
             var qrHtml = data.qrCodeBase64
                 ? `<img src="data:image/png;base64,${data.qrCodeBase64}" style="max-width:100%;max-height:100%;object-fit:contain;" alt="QR Code" />`
                 : '<span style="font-size:10pt;">---</span>';
@@ -1353,6 +1394,7 @@
 
             return `
                         <div class="cert-page">
+                            ${bgHtml}
                             <div class="cert-box cert-box-number">شماره: <span>${certNumberPersian || '---'}</span></div>
                             <div class="cert-box cert-box-date">تاریخ: <span>${todayPersian}</span></div>
                             <div class="cert-box cert-box-logo1">${logo1Html}</div>
@@ -1399,6 +1441,22 @@
                     `;
         }
 
+        // صبر می‌کند تا همه تصاویر (پس‌زمینه، QR، لوگو، امضا) لود شوند و بعد پرینت را باز می‌کند
+        function printWhenReady() {
+            var imgs = Array.from(document.querySelectorAll('#printCertificateTemplate img'));
+            var waits = imgs.map(function (img) {
+                if (img.complete) return Promise.resolve();
+                return new Promise(function (resolve) {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
+                });
+            });
+            var timeout = new Promise(function (r) { setTimeout(r, 5000); });
+            Promise.race([Promise.all(waits), timeout]).then(function () {
+                setTimeout(function () { window.print(); }, 100);
+            });
+        }
+
         function printCertificate(index) {
             var data = window.certificatesData[index];
             if (!data) return;
@@ -1408,9 +1466,7 @@
             template.innerHTML = renderSingleCertHtml(data, settings);
 
             document.body.classList.add('is-printing-cert');
-            setTimeout(() => {
-                window.print();
-            }, 150);
+            printWhenReady();
         }
 
         function printAllCertificates(dataList) {
@@ -1432,9 +1488,7 @@
             template.innerHTML = htmlContent;
 
             document.body.classList.add('is-printing-cert');
-            setTimeout(() => {
-                window.print();
-            }, 200);
+            printWhenReady();
         }
 
         function printAllFromDatabase() {
@@ -1537,6 +1591,7 @@
             logo2Src: '',
             ceo1Sig: '',
             ceo2Sig: '',
+            useBackground: false,
             ceo1SigWidth: 60,
             ceo1SigHeight: 25,
             ceo1SigTopOffset: 50,
@@ -1569,6 +1624,7 @@
                     if (typeof saved.logo2Src === 'string') settings.logo2Src = saved.logo2Src;
                     if (typeof saved.ceo1Sig === 'string') settings.ceo1Sig = saved.ceo1Sig;
                     if (typeof saved.ceo2Sig === 'string') settings.ceo2Sig = saved.ceo2Sig;
+                    if (typeof saved.useBackground === 'boolean') settings.useBackground = saved.useBackground;
                     if (typeof saved.ceo1SigWidth === 'number') settings.ceo1SigWidth = saved.ceo1SigWidth;
                     if (typeof saved.ceo1SigHeight === 'number') settings.ceo1SigHeight = saved.ceo1SigHeight;
                     if (typeof saved.ceo1SigTopOffset === 'number') settings.ceo1SigTopOffset = saved.ceo1SigTopOffset;
@@ -1617,7 +1673,26 @@
             updateFullPreview(settings);
         }
 
+        function applyBackgroundPreview(settings) {
+            var img = document.getElementById('pBgPreview');
+            if (img) {
+                if (settings.useBackground) {
+                    if (img.getAttribute('src') !== CERT_BG_URL) {
+                        img.src = CERT_BG_URL;
+                    }
+                    img.style.display = 'block';
+                } else {
+                    img.style.display = 'none';
+                }
+            }
+            document.querySelectorAll('.cert-bg-toggle').forEach(function (chk) {
+                chk.checked = !!settings.useBackground;
+            });
+        }
+
         function updateFullPreview(settings) {
+            applyBackgroundPreview(settings);
+
             setText('pCertTitlePreview', settings.texts.certTitle);
             setText('pCeo1NamePreview', settings.texts.ceo1Name);
             setText('pCeo1TitlePreview', settings.texts.ceo1Title);
@@ -2351,6 +2426,15 @@
             bindSignatureUploads();
             bindResetButton();
             bindSaveButton();
+
+            // چک‌باکس‌های پس‌زمینه (صفحه اصلی + مودال) با هم هماهنگ می‌مانند
+            document.querySelectorAll('.cert-bg-toggle').forEach(function (chk) {
+                chk.addEventListener('change', function () {
+                    currentSettings.useBackground = chk.checked;
+                    saveSettings(currentSettings);
+                    applySettings(currentSettings);
+                });
+            });
 
             var modalEl = document.getElementById('certSettingsModal');
             if (modalEl) {
