@@ -273,11 +273,14 @@
             height: 65px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid rgba(255, 215, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.35);
             border-radius: 10px;
             padding: 4px;
-            background: white;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             object-fit: contain;
+            mix-blend-mode: multiply;
         }
 
             .qr-code-small:hover {
@@ -309,21 +312,32 @@
         }
 
         .qr-modal-image-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.06) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 15px;
             border-radius: 16px;
             display: inline-block;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.04);
+        }
+
+        #qrModalImage {
+            mix-blend-mode: multiply;
+            background: transparent !important;
         }
 
         .signature-thumb {
             width: 80px;
             height: 30px;
             object-fit: contain;
-            border: 1px solid #ddd;
+            border: 1px solid rgba(255, 215, 0, 0.35);
             border-radius: 4px;
-            background: white;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             padding: 2px;
+            mix-blend-mode: multiply;
         }
 
         .signature-container {
@@ -331,6 +345,35 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
+        }
+
+        #logo1Thumb,
+        #logo2Thumb {
+            background: rgba(255, 255, 255, 0.06) !important;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 215, 0, 0.35) !important;
+            mix-blend-mode: multiply;
+        }
+
+        /* ===== افکت شیشه‌ای برای تمام تصاویر گواهینامه ===== */
+        .certificate-card img,
+        .cert-box img,
+        .cert-preview-stage img,
+        .cert-signature-img {
+            mix-blend-mode: multiply;
+            background: transparent !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .cert-box-logo1 img,
+        .cert-box-logo2 img,
+        .cert-box-barcode img,
+        .cert-box-barcode svg {
+            mix-blend-mode: multiply !important;
+            background: transparent !important;
+            opacity: 0.95 !important;
         }
 
         #printCertificateTemplate {
@@ -371,6 +414,8 @@
             background: #fff;
             page-break-after: always;
             break-after: page;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .cert-box {
@@ -385,6 +430,7 @@
             padding: 2mm;
             direction: rtl;
             font-weight: bold;
+            z-index: 1;
         }
 
         .cert-box-number {
@@ -436,6 +482,7 @@
                 max-height: 100%;
                 object-fit: contain;
                 mix-blend-mode: multiply;
+                background: transparent;
                 opacity: 0.95;
             }
 
@@ -458,6 +505,7 @@
                 max-height: 100%;
                 object-fit: contain;
                 mix-blend-mode: multiply;
+                background: transparent;
                 opacity: 0.95;
             }
 
@@ -484,6 +532,9 @@
                 max-width: 100%;
                 max-height: 100%;
                 object-fit: contain;
+                mix-blend-mode: multiply;
+                background: transparent;
+                opacity: 0.95;
             }
 
         .cert-box-maintext {
@@ -547,6 +598,7 @@
                 z-index: 1;
                 pointer-events: none;
                 mix-blend-mode: multiply;
+                background: transparent;
                 opacity: 0.95;
             }
 
@@ -591,6 +643,7 @@
                 z-index: 1;
                 pointer-events: none;
                 mix-blend-mode: multiply;
+                background: transparent;
                 opacity: 0.95;
             }
 
@@ -814,7 +867,7 @@
             font-size: calc(var(--notice2-box-font-size) * 0.42);
         }
 
-        /* ===== پس‌زمینه گواهینامه (اختیاری) ===== */
+        /* ===== پس‌زمینه گواهینامه (روی همه + شیشه‌ای) ===== */
         .cert-bg-img {
             position: absolute;
             top: 0;
@@ -822,19 +875,14 @@
             width: 100%;
             height: 100%;
             object-fit: fill;
-            z-index: 0;
+            /* روی همه المان‌ها قرار می‌گیرد */
+            z-index: 9999;
             pointer-events: none;
+            /* حالت شیشه‌ای: سفیدیِ تصویر ناپدید می‌شود و طرح حاشیه روی متن می‌ماند */
+            mix-blend-mode: multiply;
+            opacity: 0.9;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-        }
-
-        .cert-page {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        .cert-box {
-            z-index: 1;
         }
 
         @@media (max-width: 991px) {
@@ -854,6 +902,26 @@
                     page-break-after: avoid !important;
                     break-after: avoid !important;
                 }
+            /* پس‌زمینه روی همه در چاپ */
+            .cert-bg-img {
+                z-index: 9999 !important;
+                mix-blend-mode: multiply !important;
+                opacity: 0.9 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            /* شیشه‌ای کردن تمام تصاویر در زمان چاپ */
+            img,
+            .cert-box img,
+            .cert-signature-img,
+            .cert-box-logo1 img,
+            .cert-box-logo2 img,
+            .cert-box-barcode img,
+            .cert-box-barcode svg {
+                mix-blend-mode: multiply !important;
+                background: transparent !important;
+                opacity: 0.98 !important;
+            }
 
             .cert-signature-img {
                 width: var(--ceo1-signature-width, 60mm) !important;
@@ -861,8 +929,6 @@
                 top: var(--ceo1-signature-top-offset, 50%) !important;
                 left: var(--ceo1-signature-left-offset, 50%) !important;
                 object-fit: contain !important;
-                mix-blend-mode: multiply !important;
-                opacity: 0.95 !important;
             }
 
             .cert-box-ceo2 .cert-signature-img {
@@ -1123,7 +1189,7 @@
                                     <div class="col-md-6">
                                         <label class="fw-bold">لوگو ۱ (سمت راست)</label>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img id="logo1Thumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:none;background:#fff;">
+                                            <img id="logo1Thumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid rgba(255,215,0,0.35);border-radius:6px;display:none;background:rgba(255,255,255,0.06);backdrop-filter:blur(6px);mix-blend-mode:multiply;">
                                             <input type="file" id="logo1UploadInput" class="form-control form-control-sm" accept="image/*">
                                             <button type="button" id="logo1RemoveBtn" class="btn btn-sm btn-outline-danger">حذف</button>
                                         </div>
@@ -1131,7 +1197,7 @@
                                     <div class="col-md-6">
                                         <label class="fw-bold">لوگو ۲ (سمت چپ)</label>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img id="logo2Thumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:none;background:#fff;">
+                                            <img id="logo2Thumb" src="" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid rgba(255,215,0,0.35);border-radius:6px;display:none;background:rgba(255,255,255,0.06);backdrop-filter:blur(6px);mix-blend-mode:multiply;">
                                             <input type="file" id="logo2UploadInput" class="form-control form-control-sm" accept="image/*">
                                             <button type="button" id="logo2RemoveBtn" class="btn btn-sm btn-outline-danger">حذف</button>
                                         </div>
@@ -1369,23 +1435,23 @@
                 : '';
 
             var qrHtml = data.qrCodeBase64
-                ? `<img src="data:image/png;base64,${data.qrCodeBase64}" style="max-width:100%;max-height:100%;object-fit:contain;" alt="QR Code" />`
+                ? `<img src="data:image/png;base64,${data.qrCodeBase64}" style="max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply;background:transparent;opacity:0.98;" alt="QR Code" />`
                 : '<span style="font-size:10pt;">---</span>';
 
             var logo1Html = settings.logo1Src
-                ? `<img src="${settings.logo1Src}" alt="لوگو ۱" style="mix-blend-mode:multiply;opacity:0.95;max-width:100%;max-height:100%;" />`
+                ? `<img src="${settings.logo1Src}" alt="لوگو ۱" style="mix-blend-mode:multiply;background:transparent;opacity:0.95;max-width:100%;max-height:100%;" />`
                 : '';
 
             var logo2Html = settings.logo2Src
-                ? `<img src="${settings.logo2Src}" alt="لوگو ۲" style="mix-blend-mode:multiply;opacity:0.95;max-width:100%;max-height:100%;" />`
+                ? `<img src="${settings.logo2Src}" alt="لوگو ۲" style="mix-blend-mode:multiply;background:transparent;opacity:0.95;max-width:100%;max-height:100%;" />`
                 : '';
 
             var ceo1SigStyle = settings.ceo1Sig
-                ? `src="${settings.ceo1Sig}" style="display:block;width:${settings.ceo1SigWidth || 60}mm;height:${settings.ceo1SigHeight || 25}mm;top:${settings.ceo1SigTopOffset || 50}%;left:${settings.ceo1SigLeftOffset || 50}%;object-fit:contain;position:absolute;transform:translate(-50%, -50%);z-index:1;pointer-events:none;mix-blend-mode:multiply;opacity:0.95;"`
+                ? `src="${settings.ceo1Sig}" style="display:block;width:${settings.ceo1SigWidth || 60}mm;height:${settings.ceo1SigHeight || 25}mm;top:${settings.ceo1SigTopOffset || 50}%;left:${settings.ceo1SigLeftOffset || 50}%;object-fit:contain;position:absolute;transform:translate(-50%, -50%);z-index:1;pointer-events:none;mix-blend-mode:multiply;background:transparent;opacity:0.95;"`
                 : 'src="" style="display:none;"';
 
             var ceo2SigStyle = settings.ceo2Sig
-                ? `src="${settings.ceo2Sig}" style="display:block;width:${settings.ceo2SigWidth || 60}mm;height:${settings.ceo2SigHeight || 25}mm;top:${settings.ceo2SigTopOffset || 50}%;left:${settings.ceo2SigLeftOffset || 50}%;object-fit:contain;position:absolute;transform:translate(-50%, -50%);z-index:1;pointer-events:none;mix-blend-mode:multiply;opacity:0.95;"`
+                ? `src="${settings.ceo2Sig}" style="display:block;width:${settings.ceo2SigWidth || 60}mm;height:${settings.ceo2SigHeight || 25}mm;top:${settings.ceo2SigTopOffset || 50}%;left:${settings.ceo2SigLeftOffset || 50}%;object-fit:contain;position:absolute;transform:translate(-50%, -50%);z-index:1;pointer-events:none;mix-blend-mode:multiply;background:transparent;opacity:0.95;"`
                 : 'src="" style="display:none;"';
 
             var certNumberPersian = toPersianNumber(data.certNumber);
@@ -1441,7 +1507,6 @@
                     `;
         }
 
-        // صبر می‌کند تا همه تصاویر (پس‌زمینه، QR، لوگو، امضا) لود شوند و بعد پرینت را باز می‌کند
         function printWhenReady() {
             var imgs = Array.from(document.querySelectorAll('#printCertificateTemplate img'));
             var waits = imgs.map(function (img) {
@@ -1780,6 +1845,7 @@
                 el.src = src || '';
                 if (src) {
                     el.style.mixBlendMode = 'multiply';
+                    el.style.background = 'transparent';
                     el.style.opacity = '0.95';
                 }
             }
@@ -1804,12 +1870,12 @@
                     return 'تاریخ: ۱۴۰۵/۰۵/۰۱';
                 case 'logo1':
                     if (settings.logo1Src) {
-                        return `<img src="${settings.logo1Src}" style="max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply;opacity:0.95;" alt="لوگو ۱" />`;
+                        return `<img src="${settings.logo1Src}" style="max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply;background:transparent;opacity:0.95;" alt="لوگو ۱" />`;
                     }
                     return '<span style="color:#999;font-size:10pt;">(لوگو ۱)</span>';
                 case 'logo2':
                     if (settings.logo2Src) {
-                        return `<img src="${settings.logo2Src}" style="max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply;opacity:0.95;" alt="لوگو ۲" />`;
+                        return `<img src="${settings.logo2Src}" style="max-width:100%;max-height:100%;object-fit:contain;mix-blend-mode:multiply;background:transparent;opacity:0.95;" alt="لوگو ۲" />`;
                     }
                     return '<span style="color:#999;font-size:10pt;">(لوگو ۲)</span>';
                 case 'barcode':
@@ -2297,7 +2363,6 @@
         }
 
         function saveCurrentSettings() {
-            // خواندن تمام مقادیر از فیلدها
             BOX_DEFS.forEach(function (box) {
                 if (!currentSettings[box.key]) currentSettings[box.key] = {};
                 ['top', 'left', 'width', 'height', 'size'].forEach(function (prop) {
@@ -2315,7 +2380,6 @@
                 }
             });
 
-            // خواندن متن‌ها
             var textPairs = [
                 ['text-certTitle', 'certTitle'],
                 ['text-ceo1Name', 'ceo1Name'],
@@ -2332,7 +2396,6 @@
                 }
             });
 
-            // خواندن تنظیمات امضا
             var sigSettings = [
                 ['ceo1-sig-width', 'ceo1SigWidth'],
                 ['ceo1-sig-height', 'ceo1SigHeight'],
@@ -2353,11 +2416,9 @@
                 }
             });
 
-            // ذخیره در localStorage
             saveSettings(currentSettings);
             applySettings(currentSettings);
 
-            // نمایش پیام تایید
             var saveBtn = document.getElementById('certSettingsSaveBtn');
             var originalText = saveBtn.innerHTML;
             saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> ذخیره شد!';
@@ -2367,7 +2428,6 @@
                 saveBtn.classList.remove('btn-success');
             }, 2000);
 
-            // به‌روزرسانی پیش‌نمایش
             buildAccordionForm(currentSettings);
         }
 
@@ -2427,7 +2487,6 @@
             bindResetButton();
             bindSaveButton();
 
-            // چک‌باکس‌های پس‌زمینه (صفحه اصلی + مودال) با هم هماهنگ می‌مانند
             document.querySelectorAll('.cert-bg-toggle').forEach(function (chk) {
                 chk.addEventListener('change', function () {
                     currentSettings.useBackground = chk.checked;

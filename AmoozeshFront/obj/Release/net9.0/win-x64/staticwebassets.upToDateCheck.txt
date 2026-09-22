@@ -1,5 +1,6 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\images\certificate-bg.png
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -61,7 +62,6 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\images\certificate-bg.png
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\wwwroot\css\site.css
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\wwwroot\favicon.ico
 C:\Users\moridi\source\repos\AmoozeshFront\AmoozeshFront\wwwroot\js\site.js
